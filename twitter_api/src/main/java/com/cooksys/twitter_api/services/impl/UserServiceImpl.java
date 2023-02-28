@@ -46,14 +46,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Object followUser(String username) {
-		// TODO This does not return any data if successful
+	public Object followUser(String username, CredentialsRequestDto credentialsRequestDto) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Object unfollowUser(String username) {
-		// TODO This does not return any data if successful
+	public Object unfollowUser(String username, CredentialsRequestDto credentialsRequestDto) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
