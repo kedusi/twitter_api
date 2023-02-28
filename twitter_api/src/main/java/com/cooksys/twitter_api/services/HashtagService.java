@@ -1,5 +1,5 @@
 package com.cooksys.twitter_api.services;
 
-public class HashtagService {
+public interface HashtagService {
 
 }
