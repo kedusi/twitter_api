@@ -1,6 +1,5 @@
 package com.cooksys.twitter_api.services.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -46,6 +45,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private void validateUserRequest(UserRequestDto userRequestDto) {
+		if (userRequestDto.getCredentials() == null) {
+			throw new BadRequestException("Must have credentials to create a new user.");
+		}
+		if (userRequestDto.getProfile() == null) {
+			throw new BadRequestException("Must have profile to create a new user.");
+		}
 		if (userRequestDto.getCredentials().getUsername() == null) {
 			throw new BadRequestException("Must have a username to create a new user.");
 		}
@@ -56,7 +61,6 @@ public class UserServiceImpl implements UserService {
 		if (userRequestDto.getProfile().getEmail() == null) {
 			throw new BadRequestException("Must have an email to create a new user.");
 		}
-
 	}
 
 	@Override
@@ -66,14 +70,13 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserResponseDto createUser(UserRequestDto userRequestDto) {
-
+		validateUserRequest(userRequestDto);
+		
 		// Check if username already exists in database
 		User user = userRepository.findByCredentials_Username(userRequestDto.getCredentials().getUsername());
 		if (user != null) {
 			throw new BadRequestException("Username is already in use.");
 		}
-
-		validateUserRequest(userRequestDto);
 		User userToSave = userMapper.requestDtoToEntity(userRequestDto);
 		userToSave.setDeleted(false);
 
@@ -84,14 +87,15 @@ public class UserServiceImpl implements UserService {
 	public UserResponseDto getOneUser(String username) {
 		User user = getUser(username);
 		return userMapper.entityToDto(user);
-
 	}
 
 	@Override
 	public UserResponseDto updateUserProfile(String username, UserRequestDto userRequestDto) {
+		validateUserRequest(userRequestDto);
 		User userToUpdate = getUser(username);
-		if (userToUpdate.getCredentials() != userRequestDto.getCredentials()) {
-			throw new NotAuthorizedException("Credentials do not match user with username " + username);
+		
+		if (!userToUpdate.getCredentials().getPassword().equals(userRequestDto.getCredentials().getPassword())) {
+			throw new NotAuthorizedException("Password is incorrect for username: " + username);
 		}
 		userToUpdate.setProfile(userRequestDto.getProfile());
 		
@@ -103,11 +107,8 @@ public class UserServiceImpl implements UserService {
 		User userToDelete = getUser(username);
 		Credentials credentials = credentialsMapper.requestDtoToEntity(credentialsRequestDto);
 		
-		if (!userToDelete.getCredentials().getUsername().equals(credentials.getUsername())) {
-			throw new NotAuthorizedException("Provided username credentials do not match");
-		}
 		if (!userToDelete.getCredentials().getPassword().equals(credentials.getPassword())) {
-			throw new NotAuthorizedException("Password is incorrect for username " + username);
+			throw new NotAuthorizedException("Password is incorrect for username: " + username);
 		}
 		userToDelete.setDeleted(true);
 		return userMapper.entityToDto(userRepository.saveAndFlush(userToDelete));
@@ -121,16 +122,13 @@ public class UserServiceImpl implements UserService {
 		
 		User currentUser = getUser(credentials.getUsername());
 		
-		if (!currentUser.getCredentials().getUsername().equals(credentials.getUsername())) {
-			throw new NotAuthorizedException("Provided username credentials do not match");
-		}
 		if (!currentUser.getCredentials().getPassword().equals(credentials.getPassword())) {
-			throw new NotAuthorizedException("Password is incorrect for username " + username);
+			throw new NotAuthorizedException("Password is incorrect for username: " + username);
 		}
 		
 		// Ensures there is not already a following relationship between the 2 users
 		for (User u : currentUser.getFollowing()) {
-			if (u.getCredentials().getUsername() == userToFollow.getCredentials().getUsername()) {
+			if (u.getCredentials().getUsername().equalsIgnoreCase(userToFollow.getCredentials().getUsername())) {
 				throw new BadRequestException("You already follow this user.");
 			}
 		}
@@ -146,7 +144,25 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Object unfollowUser(String username, CredentialsRequestDto credentialsRequestDto) {
-		// TODO Auto-generated method stub
+		User userToUnfollow = getUser(username);
+		Credentials credentials = credentialsMapper.requestDtoToEntity(credentialsRequestDto);
+		
+		User currentUser = getUser(credentials.getUsername());
+		
+		if (!currentUser.getCredentials().getPassword().equals(credentials.getPassword())) {
+			throw new NotAuthorizedException("Password is incorrect for username: " + username);
+		}
+		
+		if (!userToUnfollow.getFollowers().contains(currentUser)) {
+			throw new BadRequestException("You do not follow this user.");
+		}
+		
+		userToUnfollow.getFollowers().remove(currentUser);
+		currentUser.getFollowing().remove(userToUnfollow);
+		
+		userMapper.entityToDto(userRepository.saveAndFlush(currentUser));
+		userMapper.entityToDto(userRepository.saveAndFlush(userToUnfollow));
+       
 		return null;
 	}
 
