@@ -33,28 +33,22 @@ public class UserServiceImpl implements UserService {
 	private final CredentialsMapper credentialsMapper;
 	private final ProfileMapper profileMapper;
 
-	private User getUser(Long id) {
-		Optional<User> optionalUser = userRepository.findByIdAndDeletedFalse(id);
-		if (optionalUser.isEmpty()) {
-			throw new NotFoundException("No user with id: " + id);
+	private User getUser(String username) {
+		User optionalUser = userRepository.findByCredentials_Username(username);
+		if (optionalUser == null) {
+			throw new NotFoundException("No user with username: " + username);
 		}
-		return optionalUser.get();
+		return optionalUser;
 	}
 
 	private void validateUserRequest(UserRequestDto userRequestDto) {
 		if (userRequestDto.getCredentials().getUsername() == null) {
 			throw new BadRequestException("Must have a username to create a new user.");
 		}
-		if (userRequestDto.getCredentials().getPassword() == null) {
+		if (userRequestDto.getCredentials().getPassword() == null
+				|| userRequestDto.getCredentials().getPassword().length() == 0) {
 			throw new BadRequestException("Must have a password to create a new user.");
 		}
-
-		// Check if username already exists
-		// Optional<User> optionalUser =
-		// userRepository.findByUsername(userRequestDto.getCredentials().getUsername());
-		// if (optionalUser.get() != null) {
-		// throw new BadRequestException("Username is already in use");
-		// }
 
 	}
 
@@ -67,6 +61,12 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserResponseDto createUser(UserRequestDto userRequestDto) {
 
+		// Check if username already exists in database
+		User optionalUser = userRepository.findByCredentials_Username(userRequestDto.getCredentials().getUsername());
+		if (optionalUser != null) {
+			throw new BadRequestException("Username is already in use.");
+		}
+
 		validateUserRequest(userRequestDto);
 		User userToSave = userMapper.requestDtoToEntity(userRequestDto);
 		userToSave.setDeleted(false);
@@ -76,8 +76,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserResponseDto getOneUser(String username) {
-		// TODO Auto-generated method stub
-		return null;
+		User user = getUser(username);
+		return userMapper.entityToDto(user);
+
 	}
 
 	@Override
