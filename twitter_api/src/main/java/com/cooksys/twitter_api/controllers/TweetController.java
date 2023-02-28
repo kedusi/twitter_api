@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cooksys.twitter_api.dtos.ContextDto;
+import com.cooksys.twitter_api.dtos.HashtagResponseDto;
 import com.cooksys.twitter_api.dtos.TweetResponseDto;
+import com.cooksys.twitter_api.dtos.UserRequestDto;
 import com.cooksys.twitter_api.dtos.UserResponseDto;
 import com.cooksys.twitter_api.services.TweetService;
 
@@ -30,58 +33,52 @@ public class TweetController {
 		return tweetService.getAllTweets();
 	}
 	
-	// TODO: Uncomment and complete after creating TweetService and appropriate DTO to take in both Tweet content and Credentials from client
-//	@PostMapping
-//	@ResponseStatus(HttpStatus.CREATED)
-//	public TweetResponseDto createTweet(@PathVariable Integer id, @RequestBody ?) {
-//		return tweetService.createTweet(id, ?);
-//	}
+	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
+	public TweetResponseDto createTweet(@PathVariable Integer id, @RequestBody UserRequestDto userRequestDto) {
+		return tweetService.createTweet(id, userRequestDto);
+	}
 	
 	@GetMapping("/{id}")
 	public TweetResponseDto getTweet(@PathVariable Integer id) {
 		return tweetService.getTweet(id);
 	}
 	
-	// TODO: Uncomment and complete after creating TweetService and appropriate DTO to take in both Tweet content and Credentials from client
-//	@DeleteMapping("/{id}")
-//	public TweetResponseDto deleteTweet(@PathVariable Integer id, @RequestBody ?) {
-//		return tweetService.deleteTweet(id, ?);
-//	}
+	@DeleteMapping("/{id}")
+	public TweetResponseDto deleteTweet(@PathVariable Integer id) {
+		return tweetService.deleteTweet(id);
+	}
 	
-	// TODO: Uncomment after creating TweetService and CredentialsDto 
-//	@PostMapping("/{id}/like")
-//	public void likeTweet(@PathVariable Integer id, @RequestBody CredentialsDto credentialsDto) {
-//		return tweetService.likeTweet(id, credentialsDto);
-//	}
+
+	@PostMapping("/{id}/like")
+	public void likeTweet(@PathVariable Integer id, @RequestBody UserRequestDto userRequestDto) {
+		
+	}
 	
-	// TODO: Uncomment and complete after creating TweetService and appropriate DTO to take in both Tweet content and Credentials from client
-//	@PostMapping("/{id}/reply")
-//	public TweetResponseDto createReply(@PathVariable Integer id, @RequestBody ?) {
-//		return tweetService.createReply(id, ?);
-//	}
+	@PostMapping("/{id}/reply")
+	public TweetResponseDto createReply(@PathVariable Integer id, @RequestBody UserRequestDto userRequestDto) {
+		return tweetService.createReply(id, userRequestDto);
+	}
 	
-	// TODO: Uncomment after creating TweetService and CredentialsDto 
-//	@PostMapping("/{id}/repost")
-//	public TweetResponseDto createRepost(@PathVariable Integer id, @RequestBody CredentialsDto credentialsDto) {
-//		return tweetService.createRepost(id, credentialsDto);
-//	}
+	@PostMapping("/{id}/repost")
+	public TweetResponseDto createRepost(@PathVariable Integer id, @RequestBody UserRequestDto userRequestDto) {
+		return tweetService.createRepost(id, userRequestDto);
+	}
 	
-	// TODO: Uncomment after creating TweetService and HashtagDto
-//	@GetMapping("/{id}/tags")
-//	public List<HashtagDto> getHashtags(@PathVariable Integer id) {
-//		return tweetService.getHashtags(id);
-//	}
+	@GetMapping("/{id}/tags")
+	public List<HashtagResponseDto> getHashtags(@PathVariable Integer id) {
+		return tweetService.getHashtags(id);
+	}
 	
 	@GetMapping("/{id}/likes")
 	public List<UserResponseDto> getLikes(@PathVariable Integer id) {
 		return tweetService.getLikes(id);
 	}
 	
-	// TODO: Uncomment after creating TweetService and ContextDto
-//	@GetMapping("/{id}/context")
-//	public ContextDto getContext(@PathVariable Integer id) {
-//		return tweetService.getContext(id);
-//	}
+	@GetMapping("/{id}/context")
+	public ContextDto getContext(@PathVariable Integer id) {
+		return tweetService.getContext(id);
+	}
 	
 	@GetMapping("{id}/replies")
 	public List<TweetResponseDto> getReplies(@PathVariable Integer id) {
