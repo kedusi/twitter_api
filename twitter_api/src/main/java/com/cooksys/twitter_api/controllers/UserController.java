@@ -39,52 +39,52 @@ public class UserController {
 		return userService.createUser(userRequestDto);
 	}
 	
-	@GetMapping("/{username}")
+	@GetMapping("/@{username}")
 	public UserResponseDto getOneUser(@PathVariable String username) {
 		return userService.getOneUser(username);
 	}
 	
-	@PatchMapping("/{username}")
+	@PatchMapping("/@{username}")
 	public UserResponseDto updateUserProfile(@PathVariable String username, @RequestBody UserRequestDto userRequestDto) {
 		return userService.updateUserProfile(username, userRequestDto);
 	}
 	
-	@DeleteMapping("/{username}")
+	@DeleteMapping("/@{username}")
 	public UserResponseDto deleteUser(@PathVariable String username, @RequestBody CredentialsRequestDto credentialsRequestDto) {
 		return userService.deleteUser(username, credentialsRequestDto);
 	}
 	
-	@PostMapping("/{username}/follow")
+	@PostMapping("/@{username}/follow")
 	public Object followUser(@PathVariable String username, @RequestBody CredentialsRequestDto credentialsRequestDto) {
 		return userService.followUser(username, credentialsRequestDto);
 	}
 	
-	@PostMapping("/{username}/unfollow")
+	@PostMapping("/@{username}/unfollow")
 	public Object unfollowUser(@PathVariable String username, @RequestBody CredentialsRequestDto credentialsRequestDto) {
 		return userService.unfollowUser(username, credentialsRequestDto);
 	}
 	
-	@GetMapping("/{username}/feed")
+	@GetMapping("/@{username}/feed")
 	public TweetResponseDto getFeed(@PathVariable String username) {
 		return userService.getFeed(username);
 	}
 	
-	@GetMapping("/{username}/tweets")
+	@GetMapping("/@{username}/tweets")
 	public TweetResponseDto getTweets(@PathVariable String username) {
 		return userService.getTweets(username);
 	}
 	
-	@GetMapping("/{username}/mentions")
+	@GetMapping("/@{username}/mentions")
 	public TweetResponseDto getMentions(@PathVariable String username) {
 		return userService.getMentions(username);
 	}
 	
-	@GetMapping("/{username}/followers")
+	@GetMapping("/@{username}/followers")
 	public TweetResponseDto getFollowers(@PathVariable String username) {
 		return userService.getFollowers(username);
 	}
 	
-	@GetMapping("/{username}/following")
+	@GetMapping("/@{username}/following")
 	public TweetResponseDto getFollowing(@PathVariable String username) {
 		return userService.getFollowing(username);
 	}

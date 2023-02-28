@@ -115,7 +115,23 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Object followUser(String username, CredentialsRequestDto credentialsRequestDto) {
-		// TODO Auto-generated method stub
+		User userToFollow = getUser(username);
+		Credentials credentials = credentialsMapper.requestDtoToEntity(credentialsRequestDto);
+		
+		User currentUser = getUser(credentials.getUsername());
+		userToFollow.getFollowers().add(currentUser);
+		currentUser.getFollowing().add(userToFollow);
+		
+		System.out.println(currentUser.getFollowing().toArray());
+		
+		 // Print the name from the list
+        for(User user : currentUser.getFollowing()) {
+            System.out.println("follwing: " + user.getCredentials().getUsername());
+        }
+        for(User user : userToFollow.getFollowers()) {
+            System.out.println("followers: " + user.getCredentials().getUsername());
+        }
+		
 		return null;
 	}
 
