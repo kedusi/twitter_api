@@ -115,23 +115,32 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Object followUser(String username, CredentialsRequestDto credentialsRequestDto) {
+		
 		User userToFollow = getUser(username);
 		Credentials credentials = credentialsMapper.requestDtoToEntity(credentialsRequestDto);
 		
 		User currentUser = getUser(credentials.getUsername());
+		
+		if (!currentUser.getCredentials().getUsername().equals(credentials.getUsername())) {
+			throw new NotAuthorizedException("Provided username credentials do not match");
+		}
+		if (!currentUser.getCredentials().getPassword().equals(credentials.getPassword())) {
+			throw new NotAuthorizedException("Password is incorrect for username " + username);
+		}
+		
+		// Ensures there is not already a following relationship between the 2 users
+		for (User u : currentUser.getFollowing()) {
+			if (u.getCredentials().getUsername() == userToFollow.getCredentials().getUsername()) {
+				throw new BadRequestException("You already follow this user.");
+			}
+		}
+		
 		userToFollow.getFollowers().add(currentUser);
 		currentUser.getFollowing().add(userToFollow);
 		
-		System.out.println(currentUser.getFollowing().toArray());
-		
-		 // Print the name from the list
-        for(User user : currentUser.getFollowing()) {
-            System.out.println("follwing: " + user.getCredentials().getUsername());
-        }
-        for(User user : userToFollow.getFollowers()) {
-            System.out.println("followers: " + user.getCredentials().getUsername());
-        }
-		
+		userMapper.entityToDto(userRepository.saveAndFlush(currentUser));
+		userMapper.entityToDto(userRepository.saveAndFlush(userToFollow));
+       
 		return null;
 	}
 

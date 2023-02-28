@@ -40,10 +40,11 @@ public class User {
 	private Credentials credentials;
 	
 	@ManyToMany
-	@JoinTable(name="followers_following")
+	@JoinTable(name = "followers_following", joinColumns = @JoinColumn(name = "follower_id"), inverseJoinColumns = @JoinColumn(name = "following_id"))
 	List<User> followers;
 	
-	@ManyToMany(mappedBy="followers")
+	@ManyToMany
+	@JoinTable(name = "followers_following", joinColumns = @JoinColumn(name = "following_id"), inverseJoinColumns = @JoinColumn(name = "follower_id"))
 	List<User> following;
 
 }
