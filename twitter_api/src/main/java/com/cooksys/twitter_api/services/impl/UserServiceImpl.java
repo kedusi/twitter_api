@@ -99,8 +99,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserResponseDto deleteUser(String username, CredentialsRequestDto credentialsRequestDto) {
-		// TODO Auto-generated method stub
-		return null;
+		User userToDelete = getUser(username);
+		userToDelete.setDeleted(true);
+		return userMapper.entityToDto(userRepository.saveAndFlush(userToDelete));
 	}
 
 	@Override
