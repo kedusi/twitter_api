@@ -1,9 +1,10 @@
 package com.cooksys.twitter_api.entities;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import jakarta.persistence.JoinColumn;
-
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,5 +37,8 @@ public class Tweet {
 	private Tweet inReplyTo;
 	
 	private Tweet repostOf;
+	
+	@ManyToMany(mappedBy="hashtag_id")
+	List<Hashtag> hashtags;
 	
 }
