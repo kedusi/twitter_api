@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.cooksys.twitter_api.exceptions.NotFoundException;
-//import com.cooksys.twitter_api.mappers.CredentialsMapper;
+import com.cooksys.twitter_api.mappers.CredentialsMapper;
 //import com.cooksys.twitter_api.mappers.ProfileMapper;
 import com.cooksys.twitter_api.mappers.UserMapper;
 import com.cooksys.twitter_api.exceptions.BadRequestException;
@@ -16,6 +16,7 @@ import com.cooksys.twitter_api.dtos.CredentialsRequestDto;
 import com.cooksys.twitter_api.dtos.TweetResponseDto;
 import com.cooksys.twitter_api.dtos.UserRequestDto;
 import com.cooksys.twitter_api.dtos.UserResponseDto;
+import com.cooksys.twitter_api.entities.Credentials;
 //import com.cooksys.twitter_api.entities.Credentials;
 //import com.cooksys.twitter_api.entities.Profile;
 import com.cooksys.twitter_api.entities.User;
@@ -30,7 +31,7 @@ public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
 	private final UserMapper userMapper;
-	// private final CredentialsMapper credentialsMapper;
+	private final CredentialsMapper credentialsMapper;
 	// private final ProfileMapper profileMapper;
 
 	private User getUser(String username) {
@@ -100,6 +101,14 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserResponseDto deleteUser(String username, CredentialsRequestDto credentialsRequestDto) {
 		User userToDelete = getUser(username);
+		Credentials credentials = credentialsMapper.requestDtoToEntity(credentialsRequestDto);
+		
+		if (!userToDelete.getCredentials().getUsername().equals(credentials.getUsername())) {
+			throw new NotAuthorizedException("Provided username credentials do not match");
+		}
+		if (!userToDelete.getCredentials().getPassword().equals(credentials.getPassword())) {
+			throw new NotAuthorizedException("Password is incorrect for username " + username);
+		}
 		userToDelete.setDeleted(true);
 		return userMapper.entityToDto(userRepository.saveAndFlush(userToDelete));
 	}
