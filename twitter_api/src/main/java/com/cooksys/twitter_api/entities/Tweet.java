@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,7 +43,7 @@ public class Tweet {
 	@JoinColumn(name = "repost_of_fk_id")
 	private Tweet repostOf;
 	
-	@ManyToMany(mappedBy="hashtag_id")
+	@ManyToMany
+	@JoinTable(name = "tweet_hashtags", joinColumns = @JoinColumn(name = "tweet_id"), inverseJoinColumns = @JoinColumn(name = "hashtag_id"))
 	List<Hashtag> hashtags;
-	
 }
