@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cooksys.twitter_api.dtos.ContentCredentialsDto;
 import com.cooksys.twitter_api.dtos.ContextDto;
+import com.cooksys.twitter_api.dtos.CredentialsRequestDto;
 import com.cooksys.twitter_api.dtos.HashtagResponseDto;
 import com.cooksys.twitter_api.dtos.TweetResponseDto;
 import com.cooksys.twitter_api.dtos.UserRequestDto;
@@ -35,8 +37,8 @@ public class TweetController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public TweetResponseDto createTweet(@PathVariable Integer id, @RequestBody UserRequestDto userRequestDto) {
-		return tweetService.createTweet(id, userRequestDto);
+	public TweetResponseDto createTweet(@PathVariable Integer id, @RequestBody ContentCredentialsDto contentCredentialsDto) {
+		return tweetService.createTweet(id, contentCredentialsDto);
 	}
 	
 	@GetMapping("/{id}")
@@ -45,24 +47,24 @@ public class TweetController {
 	}
 	
 	@DeleteMapping("/{id}")
-	public TweetResponseDto deleteTweet(@PathVariable Integer id) {
-		return tweetService.deleteTweet(id);
+	public TweetResponseDto deleteTweet(@PathVariable Integer id, @RequestBody CredentialsRequestDto credentialsRequestDto) {
+		return tweetService.deleteTweet(id, credentialsRequestDto);
 	}
 	
 
 	@PostMapping("/{id}/like")
-	public void likeTweet(@PathVariable Integer id, @RequestBody UserRequestDto userRequestDto) {
+	public void likeTweet(@PathVariable Integer id, @RequestBody CredentialsRequestDto credentialsRequestDto) {
 		
 	}
 	
 	@PostMapping("/{id}/reply")
-	public TweetResponseDto createReply(@PathVariable Integer id, @RequestBody UserRequestDto userRequestDto) {
-		return tweetService.createReply(id, userRequestDto);
+	public TweetResponseDto createReply(@PathVariable Integer id, @RequestBody ContentCredentialsDto contentCredentialsDto) {
+		return tweetService.createReply(id, contentCredentialsDto);
 	}
 	
 	@PostMapping("/{id}/repost")
-	public TweetResponseDto createRepost(@PathVariable Integer id, @RequestBody UserRequestDto userRequestDto) {
-		return tweetService.createRepost(id, userRequestDto);
+	public TweetResponseDto createRepost(@PathVariable Integer id, @RequestBody CredentialsRequestDto credentialsRequestDto) {
+		return tweetService.createRepost(id, credentialsRequestDto);
 	}
 	
 	@GetMapping("/{id}/tags")

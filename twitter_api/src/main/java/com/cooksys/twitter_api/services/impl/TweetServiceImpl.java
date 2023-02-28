@@ -5,7 +5,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.cooksys.twitter_api.dtos.ContentCredentialsDto;
 import com.cooksys.twitter_api.dtos.ContextDto;
+import com.cooksys.twitter_api.dtos.CredentialsRequestDto;
 import com.cooksys.twitter_api.dtos.HashtagResponseDto;
 import com.cooksys.twitter_api.dtos.TweetResponseDto;
 import com.cooksys.twitter_api.dtos.UserRequestDto;
@@ -45,7 +47,7 @@ public class TweetServiceImpl implements TweetService {
 	}
 	
 	@Override
-	public TweetResponseDto createTweet(Integer id, UserRequestDto userRequestDto) {
+	public TweetResponseDto createTweet(Integer id, ContentCredentialsDto contentCredentialsDto) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -57,7 +59,7 @@ public class TweetServiceImpl implements TweetService {
 	}
 	
 	@Override
-	public TweetResponseDto deleteTweet(Integer id) {
+	public TweetResponseDto deleteTweet(Integer id, CredentialsRequestDto credentialsRequestDto) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -69,13 +71,13 @@ public class TweetServiceImpl implements TweetService {
 	}
 
 	@Override
-	public TweetResponseDto createReply(Integer id, UserRequestDto userRequestDto) {
+	public TweetResponseDto createReply(Integer id, ContentCredentialsDto contentCredentialsDto) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public TweetResponseDto createRepost(Integer id, UserRequestDto userRequestDto) {
+	public TweetResponseDto createRepost(Integer id, CredentialsRequestDto credentialsRequestDto) {
 		// TODO Auto-generated method stub
 		return null;
 	}
