@@ -6,17 +6,18 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.cooksys.twitter_api.exceptions.NotFoundException;
-import com.cooksys.twitter_api.mappers.CredentialsMapper;
-import com.cooksys.twitter_api.mappers.ProfileMapper;
+//import com.cooksys.twitter_api.mappers.CredentialsMapper;
+//import com.cooksys.twitter_api.mappers.ProfileMapper;
 import com.cooksys.twitter_api.mappers.UserMapper;
 import com.cooksys.twitter_api.exceptions.BadRequestException;
+import com.cooksys.twitter_api.exceptions.NotAuthorizedException;
 import com.cooksys.twitter_api.dtos.CredentialsRequestDto;
-import com.cooksys.twitter_api.dtos.ProfileRequestDto;
+//import com.cooksys.twitter_api.dtos.ProfileRequestDto;
 import com.cooksys.twitter_api.dtos.TweetResponseDto;
 import com.cooksys.twitter_api.dtos.UserRequestDto;
 import com.cooksys.twitter_api.dtos.UserResponseDto;
-import com.cooksys.twitter_api.entities.Credentials;
-import com.cooksys.twitter_api.entities.Profile;
+//import com.cooksys.twitter_api.entities.Credentials;
+//import com.cooksys.twitter_api.entities.Profile;
 import com.cooksys.twitter_api.entities.User;
 import com.cooksys.twitter_api.repositories.UserRepository;
 import com.cooksys.twitter_api.services.UserService;
@@ -29,13 +30,16 @@ public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
 	private final UserMapper userMapper;
-	private final CredentialsMapper credentialsMapper;
-	private final ProfileMapper profileMapper;
+	// private final CredentialsMapper credentialsMapper;
+	// private final ProfileMapper profileMapper;
 
 	private User getUser(String username) {
 		User user = userRepository.findByCredentials_Username(username);
 		if (user == null) {
 			throw new NotFoundException("No user with username: " + username);
+		}
+		if (user.isDeleted()) {
+			throw new NotFoundException("User with username: " + username + " has been deleted.");
 		}
 		return user;
 	}
@@ -47,6 +51,9 @@ public class UserServiceImpl implements UserService {
 		if (userRequestDto.getCredentials().getPassword() == null
 				|| userRequestDto.getCredentials().getPassword().length() == 0) {
 			throw new BadRequestException("Must have a password to create a new user.");
+		}
+		if (userRequestDto.getProfile().getEmail() == null) {
+			throw new BadRequestException("Must have an email to create a new user.");
 		}
 
 	}
@@ -81,8 +88,13 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserResponseDto updateUserProfile(String username, UserRequestDto userRequestDto) {
-		// TODO Auto-generated method stub
-		return null;
+		User userToUpdate = getUser(username);
+		if (userToUpdate.getCredentials() != userRequestDto.getCredentials()) {
+			throw new NotAuthorizedException("Credentials do not match user with username " + username);
+		}
+		userToUpdate.setProfile(userRequestDto.getProfile());
+		
+		return userMapper.entityToDto(userRepository.saveAndFlush(userToUpdate));
 	}
 
 	@Override
