@@ -8,4 +8,6 @@ public interface HashtagService {
 
 	List<Hashtag> GetAllHashtags();
 
+	List<Hashtag> GetByTag(String label);
+
 }
