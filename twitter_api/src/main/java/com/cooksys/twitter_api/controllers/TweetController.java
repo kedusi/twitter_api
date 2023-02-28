@@ -14,21 +14,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cooksys.twitter_api.dtos.TweetResponseDto;
 import com.cooksys.twitter_api.dtos.UserResponseDto;
+import com.cooksys.twitter_api.services.TweetService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/tweets")
 public class TweetController {
 	
-//	private final TweetService tweetService;
+	private final TweetService tweetService;
 	
-	// TODO: Uncomment after creating TweetService
-//	@GetMapping
-//	public List<TweetResponseDto> getAllTweets() {
-//		return tweetService.getAllTweets();
-//	}
+	@GetMapping
+	public List<TweetResponseDto> getAllTweets() {
+		return tweetService.getAllTweets();
+	}
 	
 	// TODO: Uncomment and complete after creating TweetService and appropriate DTO to take in both Tweet content and Credentials from client
 //	@PostMapping
@@ -37,11 +37,10 @@ public class TweetController {
 //		return tweetService.createTweet(id, ?);
 //	}
 	
-	// TODO: Uncomment after creating TweetService
-//	@GetMapping("/{id}")
-//	public TweetResponseDto getTweet(@PathVariable Integer id) {
-//		return tweetService.getTweet(id);
-//	}
+	@GetMapping("/{id}")
+	public TweetResponseDto getTweet(@PathVariable Integer id) {
+		return tweetService.getTweet(id);
+	}
 	
 	// TODO: Uncomment and complete after creating TweetService and appropriate DTO to take in both Tweet content and Credentials from client
 //	@DeleteMapping("/{id}")
@@ -73,11 +72,10 @@ public class TweetController {
 //		return tweetService.getHashtags(id);
 //	}
 	
-	// TODO: Uncomment after creating TweetService
-//	@GetMapping("/{id}/likes")
-//	public List<UserResponseDto> getLikes(@PathVariable Integer id) {
-//		return tweetService.getLikes(id);
-//	}
+	@GetMapping("/{id}/likes")
+	public List<UserResponseDto> getLikes(@PathVariable Integer id) {
+		return tweetService.getLikes(id);
+	}
 	
 	// TODO: Uncomment after creating TweetService and ContextDto
 //	@GetMapping("/{id}/context")
@@ -85,22 +83,19 @@ public class TweetController {
 //		return tweetService.getContext(id);
 //	}
 	
-	// TODO: Uncomment after creating TweetService
-//	@GetMapping("{id}/replies")
-//	public List<TweetResponseDto> getReplies(@PathVariable Integer id) {
-//		return tweetService.getReplies(id);
-//	}
+	@GetMapping("{id}/replies")
+	public List<TweetResponseDto> getReplies(@PathVariable Integer id) {
+		return tweetService.getReplies(id);
+	}
 	
-	// TODO: Uncomment after creating TweetService
-//	@GetMapping("{id}/reposts")
-//	public List<TweetResponseDto> getReposts(@PathVariable Integer id) {
-//		return tweetService.getReposts(id);
-//	}
+	@GetMapping("{id}/reposts")
+	public List<TweetResponseDto> getReposts(@PathVariable Integer id) {
+		return tweetService.getReposts(id);
+	}
 	
-	// TODO: Uncomment after creating TweetService
-//	@GetMapping("{id}/mentions")
-//	public List<UserResponseDto> getMentions(@PathVariable Integer id) {
-//		return tweetService.getMentions(id);
-//	}
+	@GetMapping("{id}/mentions")
+	public List<UserResponseDto> getMentions(@PathVariable Integer id) {
+		return tweetService.getMentions(id);
+	}
 	
 }
