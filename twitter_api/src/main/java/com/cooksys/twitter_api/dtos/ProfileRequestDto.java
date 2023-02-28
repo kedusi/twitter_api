@@ -1,7 +1,5 @@
 package com.cooksys.twitter_api.dtos;
 
-import com.cooksys.twitter_api.entities.Profile;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,5 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 public class ProfileRequestDto {
 	
-	private Profile profile;
+	private String email;
+	
+	private String firstName;
+	
+	private String lastName;
+	
+	private String phone;
 }
