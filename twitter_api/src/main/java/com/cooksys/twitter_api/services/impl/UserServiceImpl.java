@@ -1,16 +1,23 @@
 package com.cooksys.twitter_api.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.cooksys.twitter_api.exceptions.NotFoundException;
+import com.cooksys.twitter_api.mappers.CredentialsMapper;
+import com.cooksys.twitter_api.mappers.ProfileMapper;
+import com.cooksys.twitter_api.mappers.UserMapper;
 import com.cooksys.twitter_api.exceptions.BadRequestException;
 import com.cooksys.twitter_api.dtos.CredentialsRequestDto;
+import com.cooksys.twitter_api.dtos.ProfileRequestDto;
 import com.cooksys.twitter_api.dtos.TweetResponseDto;
 import com.cooksys.twitter_api.dtos.UserRequestDto;
 import com.cooksys.twitter_api.dtos.UserResponseDto;
+import com.cooksys.twitter_api.entities.Credentials;
+import com.cooksys.twitter_api.entities.Profile;
 import com.cooksys.twitter_api.entities.User;
 import com.cooksys.twitter_api.repositories.UserRepository;
 import com.cooksys.twitter_api.services.UserService;
@@ -22,6 +29,9 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
+	private final UserMapper userMapper;
+	private final CredentialsMapper credentialsMapper;
+	private final ProfileMapper profileMapper;
 
 	private User getUser(Long id) {
 		Optional<User> optionalUser = userRepository.findByIdAndDeletedFalse(id);
@@ -30,29 +40,38 @@ public class UserServiceImpl implements UserService {
 		}
 		return optionalUser.get();
 	}
-	
+
 	private void validateUserRequest(UserRequestDto userRequestDto) {
-		if (userRequestDto.getCredentialsRequestDto().getUsername() == null) {
-			throw new BadRequestException("Must have a username to create a user.");
+		if (userRequestDto.getCredentials().getUsername() == null) {
+			throw new BadRequestException("Must have a username to create a new user.");
 		}
-		if (userRequestDto.getCredentialsRequestDto().getPassword() == null) {
-			throw new BadRequestException("Must have a password to create a user.");
+		if (userRequestDto.getCredentials().getPassword() == null) {
+			throw new BadRequestException("Must have a password to create a new user.");
 		}
-		if (userRequestDto.getProfileRequestDto().getEmail() == null) {
-			throw new BadRequestException("Must have an email address to create a user.");
-		}
+
+		// Check if username already exists
+		// Optional<User> optionalUser =
+		// userRepository.findByUsername(userRequestDto.getCredentials().getUsername());
+		// if (optionalUser.get() != null) {
+		// throw new BadRequestException("Username is already in use");
+		// }
+
 	}
 
 	@Override
 	public List<UserResponseDto> getAllUsers() {
-		// TODO Auto-generated method stub
-		return null;
+		return userMapper.entitiesToDtos(userRepository.findAllByDeletedFalse());
+
 	}
 
 	@Override
 	public UserResponseDto createUser(UserRequestDto userRequestDto) {
+
 		validateUserRequest(userRequestDto);
-		return null;
+		User userToSave = userMapper.requestDtoToEntity(userRequestDto);
+		userToSave.setDeleted(false);
+
+		return userMapper.entityToDto(userRepository.saveAndFlush(userToSave));
 	}
 
 	@Override

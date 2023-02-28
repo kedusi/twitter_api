@@ -3,18 +3,20 @@ package com.cooksys.twitter_api.mappers;
 import java.util.List;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import com.cooksys.twitter_api.dtos.UserRequestDto;
 import com.cooksys.twitter_api.dtos.UserResponseDto;
 import com.cooksys.twitter_api.entities.User;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses= {CredentialsMapper.class, ProfileMapper.class})
 public interface UserMapper {
 
+	@Mapping(target="username", source="credentials.username")
 	UserResponseDto entityToDto(User user);
 	
 	List<UserResponseDto> entitiesToDtos(List<User> users);
 	
-	User dtoToEntity(UserRequestDto userRequestDto);
+	User requestDtoToEntity(UserRequestDto userRequestDto);
 	
 }

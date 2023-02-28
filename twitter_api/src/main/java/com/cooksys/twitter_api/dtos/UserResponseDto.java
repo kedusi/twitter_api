@@ -2,6 +2,7 @@ package com.cooksys.twitter_api.dtos;
 
 import java.sql.Timestamp;
 
+import com.cooksys.twitter_api.entities.Credentials;
 import com.cooksys.twitter_api.entities.Profile;
 
 import lombok.Data;

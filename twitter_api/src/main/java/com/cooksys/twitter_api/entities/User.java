@@ -3,6 +3,10 @@ package com.cooksys.twitter_api.entities;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -26,15 +30,25 @@ public class User {
 	private Long id;
 
 	@Column(nullable = false, updatable = false)
+	@CreationTimestamp
 	private Timestamp joined;
 
-	@Column(nullable = false)
-	private boolean deleted;
+	private boolean deleted = false;
 	
 	@Embedded
+	@AttributeOverrides({
+		  @AttributeOverride( name = "firstName", column = @Column(name = "profile_first_name")),
+		  @AttributeOverride( name = "lastName", column = @Column(name = "profile_last_name")),
+		  @AttributeOverride( name = "phone", column = @Column(name = "profile_phone")),
+		  @AttributeOverride( name = "email", column = @Column(name = "profile_email"))
+		})
 	private Profile profile;
 	
 	@Embedded
+	@AttributeOverrides({
+		  @AttributeOverride( name = "username", column = @Column(name = "credentials_username")),
+		  @AttributeOverride( name = "password", column = @Column(name = "credentials_password"))
+	})
 	private Credentials credentials;
 	
 	@ManyToMany
