@@ -2,7 +2,6 @@ package com.cooksys.twitter_api.services.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -34,11 +33,11 @@ public class UserServiceImpl implements UserService {
 	private final ProfileMapper profileMapper;
 
 	private User getUser(String username) {
-		User optionalUser = userRepository.findByCredentials_Username(username);
-		if (optionalUser == null) {
+		User user = userRepository.findByCredentials_Username(username);
+		if (user == null) {
 			throw new NotFoundException("No user with username: " + username);
 		}
-		return optionalUser;
+		return user;
 	}
 
 	private void validateUserRequest(UserRequestDto userRequestDto) {
@@ -55,15 +54,14 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<UserResponseDto> getAllUsers() {
 		return userMapper.entitiesToDtos(userRepository.findAllByDeletedFalse());
-
 	}
 
 	@Override
 	public UserResponseDto createUser(UserRequestDto userRequestDto) {
 
 		// Check if username already exists in database
-		User optionalUser = userRepository.findByCredentials_Username(userRequestDto.getCredentials().getUsername());
-		if (optionalUser != null) {
+		User user = userRepository.findByCredentials_Username(userRequestDto.getCredentials().getUsername());
+		if (user != null) {
 			throw new BadRequestException("Username is already in use.");
 		}
 
