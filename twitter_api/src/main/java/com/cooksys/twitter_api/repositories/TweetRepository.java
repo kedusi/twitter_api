@@ -1,5 +1,11 @@
 package com.cooksys.twitter_api.repositories;
 
-public class TweetRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.cooksys.twitter_api.entities.Tweet;
+
+@Repository
+public interface TweetRepository extends JpaRepository<Tweet, Integer> {
 
 }
