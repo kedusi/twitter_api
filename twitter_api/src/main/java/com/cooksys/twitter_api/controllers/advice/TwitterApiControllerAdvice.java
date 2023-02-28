@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.cooksys.twitter_api.dtos.ErrorDto;
 import com.cooksys.twitter_api.exceptions.BadRequestException;
+import com.cooksys.twitter_api.exceptions.NotAuthorizedException;
 import com.cooksys.twitter_api.exceptions.NotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,5 +29,11 @@ public class TwitterApiControllerAdvice {
 	@ExceptionHandler(NotFoundException.class)
 	public ErrorDto handleNotFoundException(HttpServletRequest request, NotFoundException notFoundException) {
 		return new ErrorDto(notFoundException.getMessage());
+	}
+	
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	@ExceptionHandler(NotAuthorizedException.class)
+	public ErrorDto handleNotAuthorizedException(HttpServletRequest request, NotAuthorizedException notAuthorizedException) {
+		return new ErrorDto(notAuthorizedException.getMessage());
 	}
 }
