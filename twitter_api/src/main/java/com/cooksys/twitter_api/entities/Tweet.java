@@ -33,8 +33,12 @@ public class Tweet {
 	
 	private String content;
 	
+	@ManyToOne
+	@JoinColumn(name = "reply_to_fk_id")
 	private Tweet inReplyTo;
 	
+	@ManyToOne
+	@JoinColumn(name = "repost_of_fk_id")
 	private Tweet repostOf;
 	
 }
