@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cooksys.twitter_api.entities.Hashtag;
 import com.cooksys.twitter_api.services.HashtagService;
-
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -21,7 +20,7 @@ public class HashtagController {
 	
 	@GetMapping
 	private List<Hashtag> GetAllHashtags(){
-		return new ArrayList<>();
+		return hashtagService.GetAllHashtags();
 	}
 	
 }

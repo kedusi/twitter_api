@@ -1,5 +1,11 @@
 package com.cooksys.twitter_api.services;
 
-public class HashtagService {
+import java.util.List;
+
+import com.cooksys.twitter_api.entities.Hashtag;
+
+public interface HashtagService {
+
+	List<Hashtag> GetAllHashtags();
 
 }
