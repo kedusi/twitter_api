@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,6 +29,8 @@ public class Hashtag {
 	// TODO: Make hashtag label case-insensitive. Might need derived queries.
 	private String label;
 	
+	@CreationTimestamp
+	@Column(nullable = false)
 	private Timestamp firstUsed;
 	
 	private Timestamp lastUsed;
