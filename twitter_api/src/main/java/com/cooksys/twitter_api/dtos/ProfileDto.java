@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
-public class ProfileResponseDto {
+public class ProfileDto {
 	
 	private String email;
 	
@@ -14,5 +14,4 @@ public class ProfileResponseDto {
 	private String lastName;
 	
 	private String phone;
-
 }

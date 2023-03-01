@@ -2,7 +2,8 @@ package com.cooksys.twitter_api.services;
 
 import java.util.List;
 
-import com.cooksys.twitter_api.dtos.CredentialsRequestDto;
+import com.cooksys.twitter_api.dtos.CredentialsDto;
+import com.cooksys.twitter_api.dtos.ProfileDto;
 import com.cooksys.twitter_api.dtos.TweetResponseDto;
 import com.cooksys.twitter_api.dtos.UserRequestDto;
 import com.cooksys.twitter_api.dtos.UserResponseDto;
@@ -18,11 +19,11 @@ public interface UserService {
 
 	UserResponseDto updateUserProfile(String username, UserRequestDto userRequestDto);
 
-	UserResponseDto deleteUser(String username, CredentialsRequestDto credentialsRequestDto);
+	UserResponseDto deleteUser(String username, CredentialsDto credentialsRequestDto);
 
-	void followUser(String username, CredentialsRequestDto credentialsRequestDto);
+	void followUser(String username, CredentialsDto credentialsRequestDto);
 
-	void unfollowUser(String username, CredentialsRequestDto credentialsRequestDto);
+	void unfollowUser(String username, CredentialsDto credentialsRequestDto);
 
 	List<TweetResponseDto> getFeed(String username);
 
