@@ -33,7 +33,8 @@ public class UserServiceImpl implements UserService {
 	private final CredentialsMapper credentialsMapper;
 	// private final ProfileMapper profileMapper;
 
-	private User getUser(String username) {
+	// Helper method to verify and return the user from the database
+	private User getUserFromDatabase(String username) {
 		User user = userRepository.findByCredentials_Username(username);
 		if (user == null) {
 			throw new NotFoundException("No user with username: " + username);
@@ -46,20 +47,20 @@ public class UserServiceImpl implements UserService {
 
 	private void validateUserRequest(UserRequestDto userRequestDto) {
 		if (userRequestDto.getCredentials() == null) {
-			throw new BadRequestException("Must have credentials to create a new user.");
+			throw new BadRequestException("Must provide credentials.");
 		}
 		if (userRequestDto.getProfile() == null) {
-			throw new BadRequestException("Must have profile to create a new user.");
+			throw new BadRequestException("Must provide profile.");
 		}
 		if (userRequestDto.getCredentials().getUsername() == null) {
-			throw new BadRequestException("Must have a username to create a new user.");
+			throw new BadRequestException("Must provide a username.");
 		}
 		if (userRequestDto.getCredentials().getPassword() == null
 				|| userRequestDto.getCredentials().getPassword().length() == 0) {
-			throw new BadRequestException("Must have a password to create a new user.");
+			throw new BadRequestException("Must provide a password.");
 		}
 		if (userRequestDto.getProfile().getEmail() == null) {
-			throw new BadRequestException("Must have an email to create a new user.");
+			throw new BadRequestException("Must provide an email.");
 		}
 	}
 	private void validateCredentials(CredentialsRequestDto credentialsRequestDto) {
@@ -75,7 +76,7 @@ public class UserServiceImpl implements UserService {
 	public List<UserResponseDto> getAllUsers() {
 		return userMapper.entitiesToDtos(userRepository.findAllByDeletedFalse());
 	}
-
+	
 	@Override
 	public UserResponseDto createUser(UserRequestDto userRequestDto) {
 		validateUserRequest(userRequestDto);
@@ -93,14 +94,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserResponseDto getOneUser(String username) {
-		User user = getUser(username);
+		User user = getUserFromDatabase(username);
 		return userMapper.entityToDto(user);
 	}
 
 	@Override
 	public UserResponseDto updateUserProfile(String username, UserRequestDto userRequestDto) {
 		validateUserRequest(userRequestDto);
-		User userToUpdate = getUser(username);
+		User userToUpdate = getUserFromDatabase(username);
 		
 		if (!userToUpdate.getCredentials().getPassword().equals(userRequestDto.getCredentials().getPassword())) {
 			throw new NotAuthorizedException("Password is incorrect for username: " + username);
@@ -112,7 +113,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserResponseDto deleteUser(String username, CredentialsRequestDto credentialsRequestDto) {
-		User userToDelete = getUser(username);
+		User userToDelete = getUserFromDatabase(username);
 		Credentials credentials = credentialsMapper.requestDtoToEntity(credentialsRequestDto);
 		
 		if (!userToDelete.getCredentials().getPassword().equals(credentials.getPassword())) {
@@ -125,10 +126,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void followUser(String username, CredentialsRequestDto credentialsRequestDto) {
 		validateCredentials(credentialsRequestDto);
-		User userToFollow = getUser(username);
+		User userToFollow = getUserFromDatabase(username);
 		Credentials credentials = credentialsMapper.requestDtoToEntity(credentialsRequestDto);
 		
-		User currentUser = getUser(credentials.getUsername());
+		User currentUser = getUserFromDatabase(credentials.getUsername());
 		
 		if (!currentUser.getCredentials().getPassword().equals(credentials.getPassword())) {
 			throw new NotAuthorizedException("Password is incorrect for username: " + username);
@@ -151,11 +152,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void unfollowUser(String username, CredentialsRequestDto credentialsRequestDto) {
 		validateCredentials(credentialsRequestDto);
-		User userToUnfollow = getUser(username);
+		User userToUnfollow = getUserFromDatabase(username);
 		Credentials credentials = credentialsMapper.requestDtoToEntity(credentialsRequestDto);
 		
 		
-		User currentUser = getUser(credentials.getUsername());
+		User currentUser = getUserFromDatabase(credentials.getUsername());
 		
 		if (!currentUser.getCredentials().getPassword().equals(credentials.getPassword())) {
 			throw new NotAuthorizedException("Password is incorrect for username: " + username);
@@ -192,13 +193,13 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<UserResponseDto> getFollowers(String username) {
-		User user = getUser(username);
+		User user = getUserFromDatabase(username);
 		return userMapper.entitiesToDtos(user.getFollowers());
 	}
 
 	@Override
 	public List<UserResponseDto> getFollowing(String username) {
-		User user = getUser(username);
+		User user = getUserFromDatabase(username);
 		return userMapper.entitiesToDtos(user.getFollowing());
 	}
 
