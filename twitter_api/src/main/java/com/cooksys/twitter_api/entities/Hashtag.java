@@ -1,6 +1,7 @@
 package com.cooksys.twitter_api.entities;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -31,6 +32,6 @@ public class Hashtag {
 	private Timestamp lastUsed;
 	
 	@ManyToMany(mappedBy = "hashtags")
-	List<Tweet> tweets;
+	List<Tweet> tweets = new ArrayList<>();
 	
 }
