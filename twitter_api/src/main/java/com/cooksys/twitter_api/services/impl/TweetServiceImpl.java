@@ -68,7 +68,6 @@ public class TweetServiceImpl implements TweetService {
 		}
 		
 		return user;
-		
 	}
 	
 	// Searches a given string (using regex) and returns a list of any #hashtags found
@@ -97,14 +96,14 @@ public class TweetServiceImpl implements TweetService {
 				hashtagToSave.setFirstUsed(new Timestamp(now));
 				hashtagToSave.setLastUsed(new Timestamp(now));
 				hashtagToSave.setTweets(tweets);
-				hashtagToSave.setTweets(new ArrayList<>());
-		
+				
 				hashtags.add(hashtagRepository.saveAndFlush(hashtagToSave));
 			} else {
 				List<Tweet> tweets = hashtag.getTweets();
 				tweets.add(tweet);
 				hashtag.setTweets(tweets);
 				hashtag.setLastUsed(new Timestamp(now));
+				
 				hashtags.add(hashtagRepository.saveAndFlush(hashtag));
 			}
 		}
@@ -167,7 +166,6 @@ public class TweetServiceImpl implements TweetService {
 		tweet.setPosted(new Timestamp(System.currentTimeMillis()));
 		tweet.setHashtags(getHashtagsFromString(content, tweet));
 		tweet.setMentions(getMentionsFromString(content, tweet));
-		tweet.setLikes(new ArrayList<>());
 		
 		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweet));
 	}
@@ -215,7 +213,6 @@ public class TweetServiceImpl implements TweetService {
 		tweet.setInReplyTo(tweetRepliedTo);
 		tweet.setHashtags(getHashtagsFromString(content, tweet));
 		tweet.setMentions(getMentionsFromString(content, tweet));
-		tweet.setLikes(new ArrayList<>());
 		
 		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweet));
 	}
