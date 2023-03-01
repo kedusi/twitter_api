@@ -85,11 +85,11 @@ public class TweetServiceImpl implements TweetService {
 		for (String match : matches) {
 			// Get hashtag from DB
 			Hashtag hashtag = hashtagRepository.findByLabel(match);
+			long now = System.currentTimeMillis();
 			
 			// If hashtag doesn't exist in DB, create and add
 			if (hashtag == null) {
 				Hashtag hashtagToSave = new Hashtag();
-				long now = System.currentTimeMillis();
 				List<Tweet> tweets = new ArrayList<>();
 				tweets.add(tweet);
 				
@@ -101,15 +101,19 @@ public class TweetServiceImpl implements TweetService {
 		
 				hashtags.add(hashtagRepository.saveAndFlush(hashtagToSave));
 			} else {
-				hashtags.add(hashtag);
+				List<Tweet> tweets = hashtag.getTweets();
+				tweets.add(tweet);
+				hashtag.setTweets(tweets);
+				hashtag.setLastUsed(new Timestamp(now));
+				hashtags.add(hashtagRepository.saveAndFlush(hashtag));
 			}
 		}
 		
 		return hashtags;
 	}
 	
-	// Searches a given string (using regex) and returns a list of any @mentions found (without @ symbol)
-	private List<User> getMentionsFromString(String string) {
+	// Searches a given string (using regex) and returns a list of any @mentions (Users) found
+	private List<User> getMentionsFromString(String string, Tweet tweet) {
 		Pattern pattern = Pattern.compile("@(\\w+)");
 		Matcher matcher = pattern.matcher(string);
 		List<String> matches = new ArrayList<>();
@@ -124,7 +128,11 @@ public class TweetServiceImpl implements TweetService {
 			if (user == null) {
 				continue;
 			}
-			users.add(user);
+			
+			List<Tweet> tweetsMentionedIn = user.getMentions();
+			tweetsMentionedIn.add(tweet);
+			user.setMentions(tweetsMentionedIn);
+			users.add(userRepository.saveAndFlush(user));
 		}
 		
 		return users;
@@ -153,7 +161,7 @@ public class TweetServiceImpl implements TweetService {
 		tweet.setContent(content);
 		tweet.setPosted(new Timestamp(System.currentTimeMillis()));
 		tweet.setHashtags(getHashtagsFromString(content, tweet));
-		tweet.setMentions(getMentionsFromString(content));
+		tweet.setMentions(getMentionsFromString(content, tweet));
 		tweet.setLikes(new ArrayList<>());
 		
 		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweet));
@@ -201,7 +209,7 @@ public class TweetServiceImpl implements TweetService {
 		tweet.setPosted(new Timestamp(System.currentTimeMillis()));
 		tweet.setInReplyTo(tweetRepliedTo);
 		tweet.setHashtags(getHashtagsFromString(content, tweet));
-		tweet.setMentions(getMentionsFromString(content));
+		tweet.setMentions(getMentionsFromString(content, tweet));
 		tweet.setLikes(new ArrayList<>());
 		
 		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweet));
