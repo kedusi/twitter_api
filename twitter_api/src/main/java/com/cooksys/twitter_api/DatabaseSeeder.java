@@ -220,36 +220,36 @@ public class DatabaseSeeder implements CommandLineRunner {
     tweetRepository.saveAndFlush(deletedTweet);
 
     // ----- LIST of Tweets + Adding to User# -----
-//    List<Tweet> user1Tweets = List.of(tweet1, tweet2);
-//    user1.setTweets(user1Tweets);
-//    userRepository.saveAndFlush(user1);
-//
-//    List<Tweet> user2Tweets = List.of(tweet3, tweet4);
-//    user2.setTweets(user2Tweets);
-//    userRepository.saveAndFlush(user2);
-//
-//    List<Tweet> user3Tweets = List.of(tweet5, tweet6);
-//    user3.setTweets(user3Tweets);
-//    userRepository.saveAndFlush(user3);
-//
-//    // ----- List of Liked Tweets -----
-//    user1.setUserLikes(Set.copyOf(user3Tweets));
-//    userRepository.saveAndFlush(user1);
-//
-//    user2.setUserLikes(Set.copyOf(user1Tweets));
-//    userRepository.saveAndFlush(user2);
-//
-//    user3.setUserLikes(Set.copyOf(user2Tweets));
-//    userRepository.saveAndFlush(user3);
-//
-//    // ----- List of Following -----
-//    List<User> followingList = List.of(user2, user3, user4);
-//    user1.setFollowing(Set.copyOf(followingList));
-//    userRepository.saveAndFlush(user1);
-//    // ----- List of Followers -----
-//    List<User> followersList = List.of(user3, user5);
-//    user2.setFollower(Set.copyOf(followersList));
-//    userRepository.saveAndFlush(user2);
+    List<Tweet> user1Tweets = List.of(tweet1, tweet2);
+    user1.setTweets(user1Tweets);
+    userRepository.saveAndFlush(user1);
+
+    List<Tweet> user2Tweets = List.of(tweet3, tweet4);
+    user2.setTweets(user2Tweets);
+    userRepository.saveAndFlush(user2);
+
+    List<Tweet> user3Tweets = List.of(tweet5, tweet6);
+    user3.setTweets(user3Tweets);
+    userRepository.saveAndFlush(user3);
+
+   // ----- List of Liked Tweets -----
+    user1.setTweetLikes(List.copyOf(user3Tweets));
+    userRepository.saveAndFlush(user1);
+
+    user2.setTweetLikes(List.copyOf(user1Tweets));
+    userRepository.saveAndFlush(user2);
+
+  user3.setTweetLikes(List.copyOf(user2Tweets));
+   userRepository.saveAndFlush(user3);
+
+    // ----- List of Following -----
+    List<User> followingList = List.of(user2, user3, user4);
+    user1.setFollowing(List.copyOf(followingList));
+   userRepository.saveAndFlush(user1);
+    // ----- List of Followers -----
+    List<User> followersList = List.of(user3, user5);
+    user2.setFollowers(List.copyOf(followersList));
+   userRepository.saveAndFlush(user2);
 
     // ----- Tweet Mentions -----
     Tweet mention1 = new Tweet();
