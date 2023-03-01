@@ -21,7 +21,7 @@ public class Tweet {
 	
 	@Id
 	@GeneratedValue
-	private Integer id;
+	private Long id;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_table_id", nullable = false)
@@ -39,9 +39,15 @@ public class Tweet {
 	@JoinColumn(name = "reply_to_fk_id")
 	private Tweet inReplyTo;
 	
+	@OneToMany(mappedBy = "inReplyTo")
+    	private List<Tweet> replies = new ArrayList<>();
+	
 	@ManyToOne
 	@JoinColumn(name = "repost_of_fk_id")
 	private Tweet repostOf;
+	
+	@OneToMany(mappedBy = "repostOf")
+    	private List<Tweet> reposts = new ArrayList<>();
 	
 	@ManyToMany
 	@JoinTable(name = "tweet_hashtags", joinColumns = @JoinColumn(name = "tweet_id"), inverseJoinColumns = @JoinColumn(name = "hashtag_id"))
