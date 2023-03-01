@@ -47,20 +47,20 @@ public class UserServiceImpl implements UserService {
 
 	private void validateUserRequest(UserRequestDto userRequestDto) {
 		if (userRequestDto.getCredentials() == null) {
-			throw new BadRequestException("Must have credentials to create a new user.");
+			throw new BadRequestException("Must provide credentials.");
 		}
 		if (userRequestDto.getProfile() == null) {
-			throw new BadRequestException("Must have profile to create a new user.");
+			throw new BadRequestException("Must provide profile.");
 		}
 		if (userRequestDto.getCredentials().getUsername() == null) {
-			throw new BadRequestException("Must have a username to create a new user.");
+			throw new BadRequestException("Must provide a username.");
 		}
 		if (userRequestDto.getCredentials().getPassword() == null
 				|| userRequestDto.getCredentials().getPassword().length() == 0) {
-			throw new BadRequestException("Must have a password to create a new user.");
+			throw new BadRequestException("Must provide a password.");
 		}
 		if (userRequestDto.getProfile().getEmail() == null) {
-			throw new BadRequestException("Must have an email to create a new user.");
+			throw new BadRequestException("Must provide an email.");
 		}
 	}
 	private void validateCredentials(CredentialsRequestDto credentialsRequestDto) {
