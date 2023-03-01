@@ -43,15 +43,12 @@ public class User {
 	@JoinTable(name = "followers_following", joinColumns = @JoinColumn(name = "follower_id"), inverseJoinColumns = @JoinColumn(name = "following_id"))
 	List<User> followers;
 	
-	@ManyToMany
-	@JoinTable(name = "followers_following", joinColumns = @JoinColumn(name = "following_id"), inverseJoinColumns = @JoinColumn(name = "follower_id"))
+	@ManyToMany(mappedBy = "followers")
 	List<User> following;
 	
-	@ManyToMany
-	@JoinTable(name = "user_likes", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tweet_id"))
-	List<Tweet> likes;
+	@ManyToMany(mappedBy = "likes")
+	List<Tweet> tweetLikes;
 	
-	@ManyToMany
-	@JoinTable(name = "user_mentions", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tweet_id"))
-	List<Tweet> mentions;
+	@ManyToMany(mappedBy = "mentions")
+	List<Tweet> tweetMentions;
 }
