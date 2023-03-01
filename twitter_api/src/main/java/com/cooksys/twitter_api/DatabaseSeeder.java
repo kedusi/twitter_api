@@ -3,6 +3,7 @@ package com.cooksys.twitter_api;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -15,11 +16,17 @@ import com.cooksys.twitter_api.repositories.HashtagRepository;
 import com.cooksys.twitter_api.repositories.TweetRepository;
 import com.cooksys.twitter_api.repositories.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class DatabaseSeeder implements CommandLineRunner {
 
+	@Autowired
 	private UserRepository userRepository;
+	@Autowired
 	private HashtagRepository hashtagRepository;
+	@Autowired
 	private TweetRepository tweetRepository;
 
 	@Override

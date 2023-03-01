@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -30,6 +32,7 @@ public class Tweet {
 	private User author;
 	
 	@Column(nullable = false)
+	@CreationTimestamp
 	private Timestamp posted;
 	
 	@Column(nullable = false)
