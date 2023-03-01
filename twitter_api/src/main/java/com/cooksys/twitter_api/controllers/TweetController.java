@@ -37,8 +37,8 @@ public class TweetController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public TweetResponseDto createTweet(@PathVariable Integer id, @RequestBody ContentCredentialsDto contentCredentialsDto) {
-		return tweetService.createTweet(id, contentCredentialsDto);
+	public TweetResponseDto createTweet(@RequestBody ContentCredentialsDto contentCredentialsDto) {
+		return tweetService.createTweet(contentCredentialsDto);
 	}
 	
 	@GetMapping("/{id}")
