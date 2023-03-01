@@ -140,8 +140,7 @@ public class TweetServiceImpl implements TweetService {
 	
 	@Override
 	public List<TweetResponseDto> getAllTweets() {
-		// TODO Auto-generated method stub
-		return null;
+		return tweetMapper.entitiesToDtos(tweetRepository.findAll());
 	}
 	
 	@Override
