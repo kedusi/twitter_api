@@ -62,6 +62,14 @@ public class UserServiceImpl implements UserService {
 			throw new BadRequestException("Must have an email to create a new user.");
 		}
 	}
+	private void validateCredentials(CredentialsRequestDto credentialsRequestDto) {
+		if (credentialsRequestDto.getUsername() == null) {
+			throw new BadRequestException("Must provide a username.");
+		}
+		if (credentialsRequestDto.getPassword() == null) {
+			throw new BadRequestException("Must provide a password.");
+		}
+	}
 
 	@Override
 	public List<UserResponseDto> getAllUsers() {
@@ -115,8 +123,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Object followUser(String username, CredentialsRequestDto credentialsRequestDto) {
-		
+	public void followUser(String username, CredentialsRequestDto credentialsRequestDto) {
+		validateCredentials(credentialsRequestDto);
 		User userToFollow = getUser(username);
 		Credentials credentials = credentialsMapper.requestDtoToEntity(credentialsRequestDto);
 		
@@ -134,18 +142,19 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		userToFollow.getFollowers().add(currentUser);
-		currentUser.getFollowing().add(userToFollow);
 		
 		userMapper.entityToDto(userRepository.saveAndFlush(currentUser));
 		userMapper.entityToDto(userRepository.saveAndFlush(userToFollow));
        
-		return null;
+		//return null;
 	}
 
 	@Override
-	public Object unfollowUser(String username, CredentialsRequestDto credentialsRequestDto) {
+	public void unfollowUser(String username, CredentialsRequestDto credentialsRequestDto) {
+		validateCredentials(credentialsRequestDto);
 		User userToUnfollow = getUser(username);
 		Credentials credentials = credentialsMapper.requestDtoToEntity(credentialsRequestDto);
+		
 		
 		User currentUser = getUser(credentials.getUsername());
 		
@@ -158,42 +167,40 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		userToUnfollow.getFollowers().remove(currentUser);
-		currentUser.getFollowing().remove(userToUnfollow);
 		
 		userMapper.entityToDto(userRepository.saveAndFlush(currentUser));
 		userMapper.entityToDto(userRepository.saveAndFlush(userToUnfollow));
-       
-		return null;
+     
 	}
 
 	@Override
-	public TweetResponseDto getFeed(String username) {
+	public List<TweetResponseDto> getFeed(String username) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public TweetResponseDto getTweets(String username) {
+	public List<TweetResponseDto> getTweets(String username) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public TweetResponseDto getMentions(String username) {
+	public List<TweetResponseDto> getMentions(String username) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public TweetResponseDto getFollowers(String username) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<UserResponseDto> getFollowers(String username) {
+		User user = getUser(username);
+		return userMapper.entitiesToDtos(user.getFollowers());
 	}
 
 	@Override
-	public TweetResponseDto getFollowing(String username) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<UserResponseDto> getFollowing(String username) {
+		User user = getUser(username);
+		return userMapper.entitiesToDtos(user.getFollowing());
 	}
 
 }

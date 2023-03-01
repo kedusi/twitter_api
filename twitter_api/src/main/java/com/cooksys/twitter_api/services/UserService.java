@@ -20,18 +20,18 @@ public interface UserService {
 
 	UserResponseDto deleteUser(String username, CredentialsRequestDto credentialsRequestDto);
 
-	Object followUser(String username, CredentialsRequestDto credentialsRequestDto);
+	void followUser(String username, CredentialsRequestDto credentialsRequestDto);
 
-	Object unfollowUser(String username, CredentialsRequestDto credentialsRequestDto);
+	void unfollowUser(String username, CredentialsRequestDto credentialsRequestDto);
 
-	TweetResponseDto getFeed(String username);
+	List<TweetResponseDto> getFeed(String username);
 
-	TweetResponseDto getTweets(String username);
+	List<TweetResponseDto> getTweets(String username);
 
-	TweetResponseDto getMentions(String username);
+	List<TweetResponseDto> getMentions(String username);
 
-	TweetResponseDto getFollowers(String username);
+	List<UserResponseDto> getFollowers(String username);
 
-	TweetResponseDto getFollowing(String username);
+	List<UserResponseDto> getFollowing(String username);
 
 }

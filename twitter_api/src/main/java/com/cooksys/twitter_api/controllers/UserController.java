@@ -55,37 +55,37 @@ public class UserController {
 	}
 	
 	@PostMapping("/@{username}/follow")
-	public Object followUser(@PathVariable String username, @RequestBody CredentialsRequestDto credentialsRequestDto) {
-		return userService.followUser(username, credentialsRequestDto);
+	public void followUser(@PathVariable String username, @RequestBody CredentialsRequestDto credentialsRequestDto) {
+		userService.followUser(username, credentialsRequestDto);
 	}
 	
 	@PostMapping("/@{username}/unfollow")
-	public Object unfollowUser(@PathVariable String username, @RequestBody CredentialsRequestDto credentialsRequestDto) {
-		return userService.unfollowUser(username, credentialsRequestDto);
+	public void unfollowUser(@PathVariable String username, @RequestBody CredentialsRequestDto credentialsRequestDto) {
+		userService.unfollowUser(username, credentialsRequestDto);
 	}
 	
 	@GetMapping("/@{username}/feed")
-	public TweetResponseDto getFeed(@PathVariable String username) {
+	public List<TweetResponseDto> getFeed(@PathVariable String username) {
 		return userService.getFeed(username);
 	}
 	
 	@GetMapping("/@{username}/tweets")
-	public TweetResponseDto getTweets(@PathVariable String username) {
+	public List<TweetResponseDto> getTweets(@PathVariable String username) {
 		return userService.getTweets(username);
 	}
 	
 	@GetMapping("/@{username}/mentions")
-	public TweetResponseDto getMentions(@PathVariable String username) {
+	public List<TweetResponseDto> getMentions(@PathVariable String username) {
 		return userService.getMentions(username);
 	}
 	
 	@GetMapping("/@{username}/followers")
-	public TweetResponseDto getFollowers(@PathVariable String username) {
+	public List<UserResponseDto> getFollowers(@PathVariable String username) {
 		return userService.getFollowers(username);
 	}
 	
 	@GetMapping("/@{username}/following")
-	public TweetResponseDto getFollowing(@PathVariable String username) {
+	public List<UserResponseDto> getFollowing(@PathVariable String username) {
 		return userService.getFollowing(username);
 	}
 	
