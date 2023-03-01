@@ -258,6 +258,16 @@ public class TweetServiceImpl implements TweetService {
 	@Override
 	public List<UserResponseDto> getMentions(Long id) {
 		Tweet tweet = getTweetFromDb(id);
-		return userMapper.entitiesToDtos(tweet.getMentions());
+		List<User> users = tweet.getMentions();
+		List<User> nonDeletedUsers = new ArrayList<>();
+		
+		for (User user : users) {
+			Optional<User> nonDeletedUser = userRepository.findByIdAndDeletedFalse(user.getId());
+			if (nonDeletedUser.isPresent()) {
+				nonDeletedUsers.add(nonDeletedUser.get());
+			}
+		}
+		
+		return userMapper.entitiesToDtos(nonDeletedUsers);
 	}
 }
