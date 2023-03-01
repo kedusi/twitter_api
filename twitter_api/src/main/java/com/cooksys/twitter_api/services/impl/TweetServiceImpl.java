@@ -51,9 +51,8 @@ public class TweetServiceImpl implements TweetService {
 	}
 	
 	// Checks that user with given username exists and that passwords match
-	private User verifyCredentials(Credentials requestCredentials) {
-		
-		User user = userRepository.findByCredentials_Username(requestCredentials.getUsername());
+	private User verifyCredentials(Credentials credentials) {
+		User user = userRepository.findByCredentials_Username(credentials.getUsername());
 		
 		if (user == null) {
 			throw new NotFoundException("User not found");
@@ -61,7 +60,7 @@ public class TweetServiceImpl implements TweetService {
 		
 		Credentials userCredentials = user.getCredentials();
 		
-		if (requestCredentials.getPassword() != userCredentials.getPassword()) {
+		if (credentials.getPassword() != userCredentials.getPassword()) {
 			throw new NotAuthorizedException("Incorrect password provided");
 		}
 		
@@ -77,7 +76,6 @@ public class TweetServiceImpl implements TweetService {
 	
 	@Override
 	public TweetResponseDto createTweet(ContentCredentialsDto contentCredentialsDto) {
-		
 		Credentials reqCredentials = contentCredentialsDto.getCredentials();
 		
 		User user = verifyCredentials(reqCredentials);
@@ -90,7 +88,6 @@ public class TweetServiceImpl implements TweetService {
 		tweet.setPosted(new Timestamp(System.currentTimeMillis()));
 		
 		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweet));
-		
 	}
 
 	@Override
@@ -118,8 +115,20 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public TweetResponseDto createReply(Integer id, ContentCredentialsDto contentCredentialsDto) {
-		// TODO Auto-generated method stub
-		return null;
+		Credentials reqCredentials = contentCredentialsDto.getCredentials();
+		
+		User user = verifyCredentials(reqCredentials);
+		Tweet tweetRepliedTo = getTweetFromDb(id);
+		
+		// TODO: Create method for searching content string for #hashtags and @mentions!
+		Tweet tweet = new Tweet();
+		tweet.setDeleted(false);
+		tweet.setAuthor(user);
+		tweet.setContent(contentCredentialsDto.getContent());
+		tweet.setPosted(new Timestamp(System.currentTimeMillis()));
+		tweet.setInReplyTo(tweetRepliedTo);
+		
+		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweet));
 	}
 
 	@Override
