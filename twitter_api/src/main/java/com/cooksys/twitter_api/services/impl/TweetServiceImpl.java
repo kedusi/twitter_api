@@ -71,7 +71,7 @@ public class TweetServiceImpl implements TweetService {
 	}
 	
 	// Searches a given string (using regex) and returns a list of any #hashtags found
-	private List<Hashtag> getHashtagsFromString(String string) {
+	private List<Hashtag> getHashtagsFromString(String string, Tweet tweet) {
 		Pattern pattern = Pattern.compile("#(\\w+)");
 		Matcher matcher = pattern.matcher(string);
 		List<String> matches = new ArrayList<>();
@@ -88,15 +88,17 @@ public class TweetServiceImpl implements TweetService {
 			// If hashtag doesn't exist in DB, create and add
 			if (hashtag == null) {
 				Hashtag hashtagToSave = new Hashtag();
-				
 				long now = System.currentTimeMillis();
+				List<Tweet> tweets = new ArrayList<>();
+				tweets.add(tweet);
+				
 				hashtagToSave.setLabel(match.toLowerCase());
 				hashtagToSave.setFirstUsed(new Timestamp(now));
 				hashtagToSave.setLastUsed(new Timestamp(now));
-				
-				hashtagRepository.saveAndFlush(hashtagToSave);
-				hashtags.add(hashtagToSave);
-				continue;
+				hashtagToSave.setTweets(tweets);
+				hashtagToSave.setTweets(new ArrayList<>());
+		
+				hashtags.add(hashtagRepository.saveAndFlush(hashtagToSave));
 			} else {
 				hashtags.add(hashtag);
 			}
@@ -145,7 +147,7 @@ public class TweetServiceImpl implements TweetService {
 		tweet.setAuthor(user);
 		tweet.setContent(content);
 		tweet.setPosted(new Timestamp(System.currentTimeMillis()));
-		tweet.setHashtags(getHashtagsFromString(content));
+		tweet.setHashtags(getHashtagsFromString(content, tweet));
 		tweet.setMentions(getMentionsFromString(content));
 		tweet.setLikes(new ArrayList<>());
 		
@@ -189,7 +191,7 @@ public class TweetServiceImpl implements TweetService {
 		tweet.setContent(content);
 		tweet.setPosted(new Timestamp(System.currentTimeMillis()));
 		tweet.setInReplyTo(tweetRepliedTo);
-		tweet.setHashtags(getHashtagsFromString(content));
+		tweet.setHashtags(getHashtagsFromString(content, tweet));
 		tweet.setMentions(getMentionsFromString(content));
 		tweet.setLikes(new ArrayList<>());
 		
