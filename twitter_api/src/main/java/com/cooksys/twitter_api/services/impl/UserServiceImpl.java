@@ -145,8 +145,7 @@ public class UserServiceImpl implements UserService {
 		
 		userMapper.entityToDto(userRepository.saveAndFlush(currentUser));
 		userMapper.entityToDto(userRepository.saveAndFlush(userToFollow));
-       
-		//return null;
+      
 	}
 
 	@Override
