@@ -7,20 +7,15 @@ import org.springframework.stereotype.Service;
 import com.cooksys.twitter_api.exceptions.NotFoundException;
 import com.cooksys.twitter_api.mappers.CredentialsMapper;
 import com.cooksys.twitter_api.mappers.ProfileMapper;
-//import com.cooksys.twitter_api.mappers.ProfileMapper;
 import com.cooksys.twitter_api.mappers.UserMapper;
 import com.cooksys.twitter_api.exceptions.BadRequestException;
 import com.cooksys.twitter_api.exceptions.NotAuthorizedException;
 import com.cooksys.twitter_api.dtos.CredentialsDto;
-import com.cooksys.twitter_api.dtos.ProfileDto;
-//import com.cooksys.twitter_api.dtos.ProfileRequestDto;
 import com.cooksys.twitter_api.dtos.TweetResponseDto;
 import com.cooksys.twitter_api.dtos.UserRequestDto;
 import com.cooksys.twitter_api.dtos.UserResponseDto;
 import com.cooksys.twitter_api.entities.Credentials;
 import com.cooksys.twitter_api.entities.Profile;
-//import com.cooksys.twitter_api.entities.Credentials;
-//import com.cooksys.twitter_api.entities.Profile;
 import com.cooksys.twitter_api.entities.User;
 import com.cooksys.twitter_api.repositories.UserRepository;
 import com.cooksys.twitter_api.services.UserService;
@@ -49,25 +44,25 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private void validateUserRequest(UserRequestDto userRequestDto) {
-		/*if (userRequestDto.getCredentialsRequestDto() == null) {
+		if (userRequestDto.getCredentials() == null) {
 			throw new BadRequestException("Must provide your credentials.");
 		}
-		if (userRequestDto.getProfileRequestDto() == null) {
+		if (userRequestDto.getProfile() == null) {
 			throw new BadRequestException("Must provide your profile.");
 		}
 		
-		if (userRequestDto.getCredentialsRequestDto().getUsername() == null) {
+		if (userRequestDto.getCredentials().getUsername() == null) {
 			throw new BadRequestException("Must provide your username.");
 		}
-		if (userRequestDto.getCredentialsRequestDto().getPassword() == null
-				|| userRequestDto.getCredentialsRequestDto().getPassword().length() == 0) {
+		if (userRequestDto.getCredentials().getPassword() == null
+				|| userRequestDto.getCredentials().getPassword().length() == 0) {
 			throw new BadRequestException("Must provide your password.");
 		}
 		
-		if (userRequestDto.getProfileRequestDto().getEmail() == null) {
+		if (userRequestDto.getProfile().getEmail() == null) {
 			throw new BadRequestException("Must provide your email.");
 		}
-		*/
+		
 	}
 	private void validateCredentials(CredentialsDto credentialsRequestDto) {
 		if (credentialsRequestDto.getUsername() == null) {
@@ -85,7 +80,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public UserResponseDto createUser(UserRequestDto userRequestDto) {
-
+		validateUserRequest(userRequestDto);
 		validateCredentials(userRequestDto.getCredentials());
 		
 		// Check if username already exists in database
