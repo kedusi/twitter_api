@@ -26,6 +26,7 @@ import com.cooksys.twitter_api.exceptions.NotFoundException;
 import com.cooksys.twitter_api.mappers.CredentialsMapper;
 import com.cooksys.twitter_api.mappers.HashtagMapper;
 import com.cooksys.twitter_api.mappers.TweetMapper;
+import com.cooksys.twitter_api.mappers.UserMapper;
 import com.cooksys.twitter_api.repositories.HashtagRepository;
 import com.cooksys.twitter_api.repositories.TweetRepository;
 import com.cooksys.twitter_api.repositories.UserRepository;
@@ -43,6 +44,7 @@ public class TweetServiceImpl implements TweetService {
 	private final TweetMapper tweetMapper;
 	private final CredentialsMapper credentialsMapper;
 	private final HashtagMapper hashtagMapper;
+	private final UserMapper userMapper;
 	
 	// Retrieves a Tweet entity with given id from the database and throws an exception if not found
 	private Tweet getTweetFromDb(Long id) {
@@ -257,7 +259,7 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public List<UserResponseDto> getMentions(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		Tweet tweet = getTweetFromDb(id);
+		return userMapper.entitiesToDtos(tweet.getMentions());
 	}
 }
