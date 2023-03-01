@@ -9,10 +9,10 @@ import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
 
-import com.cooksys.twitter_api.dtos.ContentCredentialsDto;
 import com.cooksys.twitter_api.dtos.ContextDto;
 import com.cooksys.twitter_api.dtos.CredentialsDto;
 import com.cooksys.twitter_api.dtos.HashtagResponseDto;
+import com.cooksys.twitter_api.dtos.TweetRequestDto;
 import com.cooksys.twitter_api.dtos.TweetResponseDto;
 import com.cooksys.twitter_api.dtos.UserRequestDto;
 import com.cooksys.twitter_api.dtos.UserResponseDto;
@@ -150,9 +150,9 @@ public class TweetServiceImpl implements TweetService {
 	}
 	
 	@Override
-	public TweetResponseDto createTweet(ContentCredentialsDto contentCredentialsDto) {
-		Credentials reqCredentials = contentCredentialsDto.getCredentials();
-		String content = contentCredentialsDto.getContent();
+	public TweetResponseDto createTweet(TweetRequestDto tweetRequestDto) {
+		Credentials reqCredentials = tweetRequestDto.getCredentials();
+		String content = tweetRequestDto.getContent();
 		
 		if (content == null || content.length() == 0) {
 			throw new BadRequestException("Unable to create tweet without content");
@@ -196,9 +196,9 @@ public class TweetServiceImpl implements TweetService {
 	}
 
 	@Override
-	public TweetResponseDto createReply(Integer id, ContentCredentialsDto contentCredentialsDto) {
-		Credentials reqCredentials = contentCredentialsDto.getCredentials();
-		String content = contentCredentialsDto.getContent();
+	public TweetResponseDto createReply(Integer id, TweetRequestDto tweetRequestDto) {
+		Credentials reqCredentials = tweetRequestDto.getCredentials();
+		String content = tweetRequestDto.getContent();
 		
 		if (content == null || content.length() == 0) {
 			throw new BadRequestException("Unable to create reply without content");

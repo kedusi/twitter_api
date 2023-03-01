@@ -12,12 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cooksys.twitter_api.dtos.ContentCredentialsDto;
 import com.cooksys.twitter_api.dtos.ContextDto;
 import com.cooksys.twitter_api.dtos.CredentialsDto;
 import com.cooksys.twitter_api.dtos.HashtagResponseDto;
+import com.cooksys.twitter_api.dtos.TweetRequestDto;
 import com.cooksys.twitter_api.dtos.TweetResponseDto;
-import com.cooksys.twitter_api.dtos.UserRequestDto;
 import com.cooksys.twitter_api.dtos.UserResponseDto;
 import com.cooksys.twitter_api.services.TweetService;
 
@@ -37,8 +36,8 @@ public class TweetController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public TweetResponseDto createTweet(@RequestBody ContentCredentialsDto contentCredentialsDto) {
-		return tweetService.createTweet(contentCredentialsDto);
+	public TweetResponseDto createTweet(@RequestBody TweetRequestDto tweetRequestDto) {
+		return tweetService.createTweet(tweetRequestDto);
 	}
 	
 	@GetMapping("/{id}")
@@ -58,8 +57,8 @@ public class TweetController {
 	}
 	
 	@PostMapping("/{id}/reply")
-	public TweetResponseDto createReply(@PathVariable Integer id, @RequestBody ContentCredentialsDto contentCredentialsDto) {
-		return tweetService.createReply(id, contentCredentialsDto);
+	public TweetResponseDto createReply(@PathVariable Integer id, @RequestBody TweetRequestDto tweetRequestDto) {
+		return tweetService.createReply(id, tweetRequestDto);
 	}
 	
 	@PostMapping("/{id}/repost")
