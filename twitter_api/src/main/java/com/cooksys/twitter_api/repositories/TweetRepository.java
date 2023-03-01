@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository;
 import com.cooksys.twitter_api.entities.Tweet;
 
 @Repository
-public interface TweetRepository extends JpaRepository<Tweet, Integer> {
+public interface TweetRepository extends JpaRepository<Tweet, Long> {
 	
-	Optional<Tweet> findByIdAndDeletedFalse(Integer id);
+	Optional<Tweet> findByIdAndDeletedFalse(Long id);
 	
 	List<Tweet> findAllByDeletedFalse();
 	

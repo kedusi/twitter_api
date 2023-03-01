@@ -45,7 +45,7 @@ public class TweetServiceImpl implements TweetService {
 	private final HashtagMapper hashtagMapper;
 	
 	// Retrieves a Tweet entity with given id from the database and throws an exception if not found
-	private Tweet getTweetFromDb(Integer id) {
+	private Tweet getTweetFromDb(Long id) {
 		Optional<Tweet> optionalTweet = tweetRepository.findByIdAndDeletedFalse(id);
 		
 		if (optionalTweet.isEmpty()) {
@@ -173,13 +173,13 @@ public class TweetServiceImpl implements TweetService {
 	}
 
 	@Override
-	public TweetResponseDto getTweet(Integer id) {
+	public TweetResponseDto getTweet(Long id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	@Override
-	public TweetResponseDto deleteTweet(Integer id, CredentialsDto credentialsRequestDto) {
+	public TweetResponseDto deleteTweet(Long id, CredentialsDto credentialsRequestDto) {
 		verifyCredentials(credentialsMapper.requestDtoToEntity(credentialsRequestDto));
 		
 		Tweet tweet = getTweetFromDb(id);
@@ -190,13 +190,13 @@ public class TweetServiceImpl implements TweetService {
 	}
 	
 	@Override
-	public void likeTweet(Integer id, UserRequestDto userRequestDto) {
+	public void likeTweet(Long id, UserRequestDto userRequestDto) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public TweetResponseDto createReply(Integer id, TweetRequestDto tweetRequestDto) {
+	public TweetResponseDto createReply(Long id, TweetRequestDto tweetRequestDto) {
 		Credentials reqCredentials = tweetRequestDto.getCredentials();
 		String content = tweetRequestDto.getContent();
 		
@@ -220,43 +220,43 @@ public class TweetServiceImpl implements TweetService {
 	}
 
 	@Override
-	public TweetResponseDto createRepost(Integer id, CredentialsDto credentialsRequestDto) {
+	public TweetResponseDto createRepost(Long id, CredentialsDto credentialsRequestDto) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	@Override
-	public List<HashtagResponseDto> getHashtags(Integer id) {
+	public List<HashtagResponseDto> getHashtags(Long id) {
 		Tweet tweet = getTweetFromDb(id);
 		return hashtagMapper.entitiesToResponseDtos(tweet.getHashtags());
 	}
 
 	@Override
-	public List<UserResponseDto> getLikes(Integer id) {
+	public List<UserResponseDto> getLikes(Long id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	@Override
-	public ContextDto getContext(Integer id) {
+	public ContextDto getContext(Long id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<TweetResponseDto> getReplies(Integer id) {
+	public List<TweetResponseDto> getReplies(Long id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<TweetResponseDto> getReposts(Integer id) {
+	public List<TweetResponseDto> getReposts(Long id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<UserResponseDto> getMentions(Integer id) {
+	public List<UserResponseDto> getMentions(Long id) {
 		// TODO Auto-generated method stub
 		return null;
 	}

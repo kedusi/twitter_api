@@ -16,26 +16,26 @@ public interface TweetService {
 	
 	public TweetResponseDto createTweet(TweetRequestDto tweetRequestDto);
 
-	public TweetResponseDto getTweet(Integer id);
+	public TweetResponseDto getTweet(Long id);
 	
-	public TweetResponseDto deleteTweet(Integer id, CredentialsDto credentialsRequestDto);
+	public TweetResponseDto deleteTweet(Long id, CredentialsDto credentialsRequestDto);
 	
-	public void likeTweet(Integer id, UserRequestDto userRequestDto);
+	public void likeTweet(Long id, UserRequestDto userRequestDto);
 	
-	public TweetResponseDto createReply(Integer id, TweetRequestDto tweetRequestDto);
+	public TweetResponseDto createReply(Long id, TweetRequestDto tweetRequestDto);
 	
-	public TweetResponseDto createRepost(Integer id, CredentialsDto credentialsRequestDto);
+	public TweetResponseDto createRepost(Long id, CredentialsDto credentialsRequestDto);
 	
-	public List<HashtagResponseDto> getHashtags(Integer id);
+	public List<HashtagResponseDto> getHashtags(Long id);
 
-	public List<UserResponseDto> getLikes(Integer id);
+	public List<UserResponseDto> getLikes(Long id);
 	
-	public ContextDto getContext(Integer id);
+	public ContextDto getContext(Long id);
 
-	public List<TweetResponseDto> getReplies(Integer id);
+	public List<TweetResponseDto> getReplies(Long id);
 
-	public List<TweetResponseDto> getReposts(Integer id);
+	public List<TweetResponseDto> getReposts(Long id);
 
-	public List<UserResponseDto> getMentions(Integer id);
+	public List<UserResponseDto> getMentions(Long id);
 
 }
