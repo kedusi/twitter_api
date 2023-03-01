@@ -251,8 +251,18 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public List<TweetResponseDto> getReposts(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		Tweet tweet = getTweetFromDb(id);
+		List<Tweet> reposts = tweet.getReposts();
+		List<Tweet> nonDeletedReposts = new ArrayList<>();
+		
+		for (Tweet repost : reposts) {
+			Optional<Tweet> nonDeletedRepost = tweetRepository.findByIdAndDeletedFalse(repost.getId());
+			if (nonDeletedRepost.isPresent()) {
+				nonDeletedReposts.add(nonDeletedRepost.get());
+			}
+		}
+		
+		return tweetMapper.entitiesToDtos(nonDeletedReposts);
 	}
 
 	@Override
