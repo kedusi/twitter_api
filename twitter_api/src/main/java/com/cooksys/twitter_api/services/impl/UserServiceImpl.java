@@ -6,16 +6,19 @@ import org.springframework.stereotype.Service;
 
 import com.cooksys.twitter_api.exceptions.NotFoundException;
 import com.cooksys.twitter_api.mappers.CredentialsMapper;
+import com.cooksys.twitter_api.mappers.ProfileMapper;
 //import com.cooksys.twitter_api.mappers.ProfileMapper;
 import com.cooksys.twitter_api.mappers.UserMapper;
 import com.cooksys.twitter_api.exceptions.BadRequestException;
 import com.cooksys.twitter_api.exceptions.NotAuthorizedException;
-import com.cooksys.twitter_api.dtos.CredentialsRequestDto;
+import com.cooksys.twitter_api.dtos.CredentialsDto;
+import com.cooksys.twitter_api.dtos.ProfileDto;
 //import com.cooksys.twitter_api.dtos.ProfileRequestDto;
 import com.cooksys.twitter_api.dtos.TweetResponseDto;
 import com.cooksys.twitter_api.dtos.UserRequestDto;
 import com.cooksys.twitter_api.dtos.UserResponseDto;
 import com.cooksys.twitter_api.entities.Credentials;
+import com.cooksys.twitter_api.entities.Profile;
 //import com.cooksys.twitter_api.entities.Credentials;
 //import com.cooksys.twitter_api.entities.Profile;
 import com.cooksys.twitter_api.entities.User;
@@ -31,7 +34,7 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final UserMapper userMapper;
 	private final CredentialsMapper credentialsMapper;
-	// private final ProfileMapper profileMapper;
+	private final ProfileMapper profileMapper;
 
 	// Helper method to verify and return the user from the database
 	private User getUserFromDatabase(String username) {
@@ -46,29 +49,32 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private void validateUserRequest(UserRequestDto userRequestDto) {
-		if (userRequestDto.getCredentials() == null) {
-			throw new BadRequestException("Must provide credentials.");
+		/*if (userRequestDto.getCredentialsRequestDto() == null) {
+			throw new BadRequestException("Must provide your credentials.");
 		}
-		if (userRequestDto.getProfile() == null) {
-			throw new BadRequestException("Must provide profile.");
+		if (userRequestDto.getProfileRequestDto() == null) {
+			throw new BadRequestException("Must provide your profile.");
 		}
-		if (userRequestDto.getCredentials().getUsername() == null) {
-			throw new BadRequestException("Must provide a username.");
+		
+		if (userRequestDto.getCredentialsRequestDto().getUsername() == null) {
+			throw new BadRequestException("Must provide your username.");
 		}
-		if (userRequestDto.getCredentials().getPassword() == null
-				|| userRequestDto.getCredentials().getPassword().length() == 0) {
-			throw new BadRequestException("Must provide a password.");
+		if (userRequestDto.getCredentialsRequestDto().getPassword() == null
+				|| userRequestDto.getCredentialsRequestDto().getPassword().length() == 0) {
+			throw new BadRequestException("Must provide your password.");
 		}
-		if (userRequestDto.getProfile().getEmail() == null) {
-			throw new BadRequestException("Must provide an email.");
+		
+		if (userRequestDto.getProfileRequestDto().getEmail() == null) {
+			throw new BadRequestException("Must provide your email.");
 		}
+		*/
 	}
-	private void validateCredentials(CredentialsRequestDto credentialsRequestDto) {
+	private void validateCredentials(CredentialsDto credentialsRequestDto) {
 		if (credentialsRequestDto.getUsername() == null) {
-			throw new BadRequestException("Must provide a username.");
+			throw new BadRequestException("Must provide your username.");
 		}
 		if (credentialsRequestDto.getPassword() == null) {
-			throw new BadRequestException("Must provide a password.");
+			throw new BadRequestException("Must provide your password.");
 		}
 	}
 
@@ -79,7 +85,8 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public UserResponseDto createUser(UserRequestDto userRequestDto) {
-		validateUserRequest(userRequestDto);
+
+		validateCredentials(userRequestDto.getCredentials());
 		
 		// Check if username already exists in database
 		User user = userRepository.findByCredentials_Username(userRequestDto.getCredentials().getUsername());
@@ -102,17 +109,18 @@ public class UserServiceImpl implements UserService {
 	public UserResponseDto updateUserProfile(String username, UserRequestDto userRequestDto) {
 		validateUserRequest(userRequestDto);
 		User userToUpdate = getUserFromDatabase(username);
+		Profile profile = profileMapper.requestDtoToEntity(userRequestDto.getProfile());
 		
 		if (!userToUpdate.getCredentials().getPassword().equals(userRequestDto.getCredentials().getPassword())) {
 			throw new NotAuthorizedException("Password is incorrect for username: " + username);
 		}
-		userToUpdate.setProfile(userRequestDto.getProfile());
+		userToUpdate.setProfile(profile);
 		
 		return userMapper.entityToDto(userRepository.saveAndFlush(userToUpdate));
 	}
 
 	@Override
-	public UserResponseDto deleteUser(String username, CredentialsRequestDto credentialsRequestDto) {
+	public UserResponseDto deleteUser(String username, CredentialsDto credentialsRequestDto) {
 		User userToDelete = getUserFromDatabase(username);
 		Credentials credentials = credentialsMapper.requestDtoToEntity(credentialsRequestDto);
 		
@@ -124,7 +132,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void followUser(String username, CredentialsRequestDto credentialsRequestDto) {
+	public void followUser(String username, CredentialsDto credentialsRequestDto) {
 		validateCredentials(credentialsRequestDto);
 		User userToFollow = getUserFromDatabase(username);
 		Credentials credentials = credentialsMapper.requestDtoToEntity(credentialsRequestDto);
@@ -150,7 +158,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void unfollowUser(String username, CredentialsRequestDto credentialsRequestDto) {
+	public void unfollowUser(String username, CredentialsDto credentialsRequestDto) {
 		validateCredentials(credentialsRequestDto);
 		User userToUnfollow = getUserFromDatabase(username);
 		Credentials credentials = credentialsMapper.requestDtoToEntity(credentialsRequestDto);

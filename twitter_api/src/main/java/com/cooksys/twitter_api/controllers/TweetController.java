@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cooksys.twitter_api.dtos.ContentCredentialsDto;
 import com.cooksys.twitter_api.dtos.ContextDto;
-import com.cooksys.twitter_api.dtos.CredentialsRequestDto;
+import com.cooksys.twitter_api.dtos.CredentialsDto;
 import com.cooksys.twitter_api.dtos.HashtagResponseDto;
 import com.cooksys.twitter_api.dtos.TweetResponseDto;
 import com.cooksys.twitter_api.dtos.UserRequestDto;
@@ -47,13 +47,13 @@ public class TweetController {
 	}
 	
 	@DeleteMapping("/{id}")
-	public TweetResponseDto deleteTweet(@PathVariable Integer id, @RequestBody CredentialsRequestDto credentialsRequestDto) {
+	public TweetResponseDto deleteTweet(@PathVariable Integer id, @RequestBody CredentialsDto credentialsRequestDto) {
 		return tweetService.deleteTweet(id, credentialsRequestDto);
 	}
 	
 
 	@PostMapping("/{id}/like")
-	public void likeTweet(@PathVariable Integer id, @RequestBody CredentialsRequestDto credentialsRequestDto) {
+	public void likeTweet(@PathVariable Integer id, @RequestBody CredentialsDto credentialsRequestDto) {
 		
 	}
 	
@@ -63,7 +63,7 @@ public class TweetController {
 	}
 	
 	@PostMapping("/{id}/repost")
-	public TweetResponseDto createRepost(@PathVariable Integer id, @RequestBody CredentialsRequestDto credentialsRequestDto) {
+	public TweetResponseDto createRepost(@PathVariable Integer id, @RequestBody CredentialsDto credentialsRequestDto) {
 		return tweetService.createRepost(id, credentialsRequestDto);
 	}
 	

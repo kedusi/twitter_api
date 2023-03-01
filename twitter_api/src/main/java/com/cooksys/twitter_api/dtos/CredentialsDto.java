@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
-public class CredentialsRequestDto {
+public class CredentialsDto {
 
 	private String username;
 	
