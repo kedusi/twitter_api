@@ -14,7 +14,7 @@ public interface TweetService {
 
 	public List<TweetResponseDto> getAllTweets();
 	
-	public TweetResponseDto createTweet(Integer id, ContentCredentialsDto contentCredentialsDto);
+	public TweetResponseDto createTweet(ContentCredentialsDto contentCredentialsDto);
 
 	public TweetResponseDto getTweet(Integer id);
 	
