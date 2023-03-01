@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.cooksys.twitter_api.dtos.HashtagResponseDto;
+import com.cooksys.twitter_api.dtos.TweetResponseDto;
 import com.cooksys.twitter_api.entities.Hashtag;
 import com.cooksys.twitter_api.entities.Tweet;
 import com.cooksys.twitter_api.mappers.HashtagMapper;
@@ -26,7 +27,7 @@ public class HashtagServiceImpl implements HashtagService {
 	}
 
 	@Override
-	public List<Tweet> GetTweetsByTag(String label) {
+	public List<TweetResponseDto> GetTweetsByTag(String label) {
 		// TODO GetTweetsByTag for HTServImpl
 		return null;
 	}

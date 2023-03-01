@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cooksys.twitter_api.dtos.HashtagResponseDto;
+import com.cooksys.twitter_api.dtos.TweetResponseDto;
 import com.cooksys.twitter_api.entities.Hashtag;
 import com.cooksys.twitter_api.entities.Tweet;
 import com.cooksys.twitter_api.services.HashtagService;
@@ -19,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("tags")
 public class HashtagController {
 
-	private HashtagService hashtagService;
+	private final HashtagService hashtagService;
 
 	@GetMapping
 	private List<HashtagResponseDto> GetAllHashtags() {
@@ -27,7 +28,7 @@ public class HashtagController {
 	}
 
 	@GetMapping("/{label}")
-	private List<Tweet> GetTweetsByTag(@PathVariable String label) {
+	private List<TweetResponseDto> GetTweetsByTag(@PathVariable String label) {
 		return hashtagService.GetTweetsByTag(label);
 	}
 }
