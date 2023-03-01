@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,6 +34,8 @@ public class Hashtag {
 	@Column(nullable = false)
 	private Timestamp firstUsed;
 	
+	@UpdateTimestamp
+	@Column(nullable = false)
 	private Timestamp lastUsed;
 	
 	@ManyToMany(mappedBy = "hashtags")
