@@ -1,6 +1,7 @@
 package com.cooksys.twitter_api.entities;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.JoinColumn;
@@ -11,6 +12,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

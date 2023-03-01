@@ -129,9 +129,9 @@ public class TweetServiceImpl implements TweetService {
 				continue;
 			}
 			
-			List<Tweet> tweetsMentionedIn = user.getMentions();
+			List<Tweet> tweetsMentionedIn = user.getTweetMentions();
 			tweetsMentionedIn.add(tweet);
-			user.setMentions(tweetsMentionedIn);
+			user.setTweetMentions(tweetsMentionedIn);
 			users.add(userRepository.saveAndFlush(user));
 		}
 		
