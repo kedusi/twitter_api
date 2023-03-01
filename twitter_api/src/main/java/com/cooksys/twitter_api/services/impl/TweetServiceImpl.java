@@ -138,9 +138,15 @@ public class TweetServiceImpl implements TweetService {
 		return users;
 	}
 	
+	private List<Tweet> getAllTweetsIncludingDeleted() {
+		return tweetRepository.findAll();
+	}
+	
 	@Override
 	public List<TweetResponseDto> getAllTweets() {
-		return tweetMapper.entitiesToDtos(tweetRepository.findAll());
+		List<Tweet> tweets = getAllTweetsIncludingDeleted();
+
+		return tweetMapper.entitiesToDtos(tweets.stream().filter(tweet -> !tweet.isDeleted()).sorted((tweet1, tweet2) -> tweet2.getPosted().compareTo(tweet1.getPosted())).toList());
 	}
 	
 	@Override
