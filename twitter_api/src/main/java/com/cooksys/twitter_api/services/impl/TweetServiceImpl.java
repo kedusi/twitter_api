@@ -20,6 +20,7 @@ import com.cooksys.twitter_api.entities.Tweet;
 import com.cooksys.twitter_api.entities.User;
 import com.cooksys.twitter_api.exceptions.NotAuthorizedException;
 import com.cooksys.twitter_api.exceptions.NotFoundException;
+import com.cooksys.twitter_api.mappers.CredentialsMapper;
 import com.cooksys.twitter_api.mappers.TweetMapper;
 import com.cooksys.twitter_api.repositories.HashtagRepository;
 import com.cooksys.twitter_api.repositories.TweetRepository;
@@ -36,6 +37,7 @@ public class TweetServiceImpl implements TweetService {
 	private final UserRepository userRepository;
 	private final HashtagRepository hashtagRepository;
 	private final TweetMapper tweetMapper;
+	private final CredentialsMapper credentialsMapper;
 	
 	// Retrieves a Tweet entity with given id from the database and throws an exception if not found
 	private Tweet getTweetFromDb(Integer id) {
@@ -46,6 +48,25 @@ public class TweetServiceImpl implements TweetService {
 		}
 		
 		return optionalTweet.get();
+	}
+	
+	// Checks that user with given username exists and that passwords match
+	private User verifyCredentials(Credentials requestCredentials) {
+		
+		User user = userRepository.findByCredentials_Username(requestCredentials.getUsername());
+		
+		if (user == null) {
+			throw new NotFoundException("User not found");
+		}
+		
+		Credentials userCredentials = user.getCredentials();
+		
+		if (requestCredentials.getPassword() != userCredentials.getPassword()) {
+			throw new NotAuthorizedException("Incorrect password provided");
+		}
+		
+		return user;
+		
 	}
 	
 	@Override
@@ -59,17 +80,7 @@ public class TweetServiceImpl implements TweetService {
 		
 		Credentials reqCredentials = contentCredentialsDto.getCredentials();
 		
-		User user = userRepository.findByCredentials_Username(reqCredentials.getUsername());
-		
-		if (user == null) {
-			throw new NotFoundException("User not found");
-		}
-		
-		Credentials userCredentials = user.getCredentials();
-		
-		if (reqCredentials.getPassword() != userCredentials.getPassword()) {
-			throw new NotAuthorizedException("Incorrect password provided");
-		}
+		User user = verifyCredentials(reqCredentials);
 		
 		// TODO: Create method for searching content string for #hashtags and @mentions!
 		Tweet tweet = new Tweet();
@@ -90,8 +101,13 @@ public class TweetServiceImpl implements TweetService {
 	
 	@Override
 	public TweetResponseDto deleteTweet(Integer id, CredentialsRequestDto credentialsRequestDto) {
-		// TODO Auto-generated method stub
-		return null;
+		verifyCredentials(credentialsMapper.requestDtoToEntity(credentialsRequestDto));
+		
+		Tweet tweet = getTweetFromDb(id);
+		
+		tweet.setDeleted(true);
+		
+		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweet));
 	}
 	
 	@Override
