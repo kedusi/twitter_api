@@ -24,11 +24,11 @@ public class HashtagController {
 
 	@GetMapping
 	private List<HashtagResponseDto> GetAllHashtags() {
-		return hashtagService.GetAllHashtags();
+		return hashtagService.getAllTags();
 	}
 
 	@GetMapping("/{label}")
 	private List<TweetResponseDto> GetTweetsByTag(@PathVariable String label) {
-		return hashtagService.GetTweetsByTag(label);
+		return hashtagService.getTweetsByTag(label);
 	}
 }

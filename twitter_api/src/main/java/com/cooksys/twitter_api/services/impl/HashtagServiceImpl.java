@@ -22,12 +22,12 @@ public class HashtagServiceImpl implements HashtagService {
 	private final HashtagMapper hashtagMapper;
 
 	@Override
-	public List<HashtagResponseDto> GetAllHashtags() {
+	public List<HashtagResponseDto> getAllTags() {
 		return hashtagMapper.entitiesToResponseDtos(hashtagRepository.findAll());
 	}
 
 	@Override
-	public List<TweetResponseDto> GetTweetsByTag(String label) {
+	public List<TweetResponseDto> getTweetsByTag(String label) {
 		// TODO GetTweetsByTag for HTServImpl
 		return null;
 	}

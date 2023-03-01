@@ -9,8 +9,10 @@ import com.cooksys.twitter_api.entities.Tweet;
 
 public interface HashtagService {
 
-	List<HashtagResponseDto> GetAllHashtags();
+	List<HashtagResponseDto> getAllTags();
 
-	List<TweetResponseDto> GetTweetsByTag(String label);
+	List<TweetResponseDto> getTweetsByTag(String label);
+	
+	
 
 }
