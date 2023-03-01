@@ -20,6 +20,7 @@ import com.cooksys.twitter_api.entities.Credentials;
 import com.cooksys.twitter_api.entities.Hashtag;
 import com.cooksys.twitter_api.entities.Tweet;
 import com.cooksys.twitter_api.entities.User;
+import com.cooksys.twitter_api.exceptions.BadRequestException;
 import com.cooksys.twitter_api.exceptions.NotAuthorizedException;
 import com.cooksys.twitter_api.exceptions.NotFoundException;
 import com.cooksys.twitter_api.mappers.CredentialsMapper;
@@ -140,6 +141,10 @@ public class TweetServiceImpl implements TweetService {
 		Credentials reqCredentials = contentCredentialsDto.getCredentials();
 		String content = contentCredentialsDto.getContent();
 		
+		if (content == null || content.length() == 0) {
+			throw new BadRequestException("Unable to create tweet without content");
+		}
+		
 		User user = verifyCredentials(reqCredentials);
 		
 		Tweet tweet = new Tweet();
@@ -181,6 +186,10 @@ public class TweetServiceImpl implements TweetService {
 	public TweetResponseDto createReply(Integer id, ContentCredentialsDto contentCredentialsDto) {
 		Credentials reqCredentials = contentCredentialsDto.getCredentials();
 		String content = contentCredentialsDto.getContent();
+		
+		if (content == null || content.length() == 0) {
+			throw new BadRequestException("Unable to create reply without content");
+		}
 		
 		User user = verifyCredentials(reqCredentials);
 		Tweet tweetRepliedTo = getTweetFromDb(id);
