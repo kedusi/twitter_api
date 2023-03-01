@@ -9,10 +9,10 @@ import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
 
-import com.cooksys.twitter_api.dtos.ContentCredentialsDto;
 import com.cooksys.twitter_api.dtos.ContextDto;
 import com.cooksys.twitter_api.dtos.CredentialsDto;
 import com.cooksys.twitter_api.dtos.HashtagResponseDto;
+import com.cooksys.twitter_api.dtos.TweetRequestDto;
 import com.cooksys.twitter_api.dtos.TweetResponseDto;
 import com.cooksys.twitter_api.dtos.UserRequestDto;
 import com.cooksys.twitter_api.dtos.UserResponseDto;
@@ -24,7 +24,9 @@ import com.cooksys.twitter_api.exceptions.BadRequestException;
 import com.cooksys.twitter_api.exceptions.NotAuthorizedException;
 import com.cooksys.twitter_api.exceptions.NotFoundException;
 import com.cooksys.twitter_api.mappers.CredentialsMapper;
+import com.cooksys.twitter_api.mappers.HashtagMapper;
 import com.cooksys.twitter_api.mappers.TweetMapper;
+import com.cooksys.twitter_api.mappers.UserMapper;
 import com.cooksys.twitter_api.repositories.HashtagRepository;
 import com.cooksys.twitter_api.repositories.TweetRepository;
 import com.cooksys.twitter_api.repositories.UserRepository;
@@ -41,10 +43,18 @@ public class TweetServiceImpl implements TweetService {
 	private final HashtagRepository hashtagRepository;
 	private final TweetMapper tweetMapper;
 	private final CredentialsMapper credentialsMapper;
+<<<<<<< HEAD
 
 	// Retrieves a Tweet entity with given id from the database and throws an
 	// exception if not found
 	private Tweet getTweetFromDb(Integer id) {
+=======
+	private final HashtagMapper hashtagMapper;
+	private final UserMapper userMapper;
+	
+	// Retrieves a Tweet entity with given id from the database and throws an exception if not found
+	private Tweet getTweetFromDb(Long id) {
+>>>>>>> 22845b6f562496b79d9163dc2c49a76a44926e01
 		Optional<Tweet> optionalTweet = tweetRepository.findByIdAndDeletedFalse(id);
 
 		if (optionalTweet.isEmpty()) {
@@ -69,7 +79,10 @@ public class TweetServiceImpl implements TweetService {
 		}
 
 		return user;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 22845b6f562496b79d9163dc2c49a76a44926e01
 	}
 
 	// Searches a given string (using regex) and returns a list of any #hashtags
@@ -99,14 +112,19 @@ public class TweetServiceImpl implements TweetService {
 				hashtagToSave.setFirstUsed(new Timestamp(now));
 				hashtagToSave.setLastUsed(new Timestamp(now));
 				hashtagToSave.setTweets(tweets);
+<<<<<<< HEAD
 				hashtagToSave.setTweets(new ArrayList<>());
 
+=======
+				
+>>>>>>> 22845b6f562496b79d9163dc2c49a76a44926e01
 				hashtags.add(hashtagRepository.saveAndFlush(hashtagToSave));
 			} else {
 				List<Tweet> tweets = hashtag.getTweets();
 				tweets.add(tweet);
 				hashtag.setTweets(tweets);
 				hashtag.setLastUsed(new Timestamp(now));
+				
 				hashtags.add(hashtagRepository.saveAndFlush(hashtag));
 			}
 		}
@@ -149,10 +167,17 @@ public class TweetServiceImpl implements TweetService {
 	}
 
 	@Override
+<<<<<<< HEAD
 	public TweetResponseDto createTweet(ContentCredentialsDto contentCredentialsDto) {
 		Credentials reqCredentials = contentCredentialsDto.getCredentials();
 		String content = contentCredentialsDto.getContent();
 
+=======
+	public TweetResponseDto createTweet(TweetRequestDto tweetRequestDto) {
+		Credentials reqCredentials = tweetRequestDto.getCredentials();
+		String content = tweetRequestDto.getContent();
+		
+>>>>>>> 22845b6f562496b79d9163dc2c49a76a44926e01
 		if (content == null || content.length() == 0) {
 			throw new BadRequestException("Unable to create tweet without content");
 		}
@@ -166,19 +191,23 @@ public class TweetServiceImpl implements TweetService {
 		tweet.setPosted(new Timestamp(System.currentTimeMillis()));
 		tweet.setHashtags(getHashtagsFromString(content, tweet));
 		tweet.setMentions(getMentionsFromString(content, tweet));
+<<<<<<< HEAD
 		tweet.setLikes(new ArrayList<>());
 
+=======
+		
+>>>>>>> 22845b6f562496b79d9163dc2c49a76a44926e01
 		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweet));
 	}
 
 	@Override
-	public TweetResponseDto getTweet(Integer id) {
+	public TweetResponseDto getTweet(Long id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public TweetResponseDto deleteTweet(Integer id, CredentialsDto credentialsRequestDto) {
+	public TweetResponseDto deleteTweet(Long id, CredentialsDto credentialsRequestDto) {
 		verifyCredentials(credentialsMapper.requestDtoToEntity(credentialsRequestDto));
 
 		Tweet tweet = getTweetFromDb(id);
@@ -189,16 +218,23 @@ public class TweetServiceImpl implements TweetService {
 	}
 
 	@Override
-	public void likeTweet(Integer id, UserRequestDto userRequestDto) {
+	public void likeTweet(Long id, UserRequestDto userRequestDto) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
+<<<<<<< HEAD
 	public TweetResponseDto createReply(Integer id, ContentCredentialsDto contentCredentialsDto) {
 		Credentials reqCredentials = contentCredentialsDto.getCredentials();
 		String content = contentCredentialsDto.getContent();
 
+=======
+	public TweetResponseDto createReply(Long id, TweetRequestDto tweetRequestDto) {
+		Credentials reqCredentials = tweetRequestDto.getCredentials();
+		String content = tweetRequestDto.getContent();
+		
+>>>>>>> 22845b6f562496b79d9163dc2c49a76a44926e01
 		if (content == null || content.length() == 0) {
 			throw new BadRequestException("Unable to create reply without content");
 		}
@@ -214,51 +250,54 @@ public class TweetServiceImpl implements TweetService {
 		tweet.setInReplyTo(tweetRepliedTo);
 		tweet.setHashtags(getHashtagsFromString(content, tweet));
 		tweet.setMentions(getMentionsFromString(content, tweet));
+<<<<<<< HEAD
 		tweet.setLikes(new ArrayList<>());
 
+=======
+		
+>>>>>>> 22845b6f562496b79d9163dc2c49a76a44926e01
 		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweet));
 	}
 
 	@Override
-	public TweetResponseDto createRepost(Integer id, CredentialsDto credentialsRequestDto) {
+	public TweetResponseDto createRepost(Long id, CredentialsDto credentialsRequestDto) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<UserResponseDto> getLikes(Integer id) {
+	public List<HashtagResponseDto> getHashtags(Long id) {
+		Tweet tweet = getTweetFromDb(id);
+		return hashtagMapper.entitiesToResponseDtos(tweet.getHashtags());
+	}
+
+	@Override
+	public List<UserResponseDto> getLikes(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public ContextDto getContext(Long id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ContextDto getContext(Integer id) {
+	public List<TweetResponseDto> getReplies(Long id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<TweetResponseDto> getReplies(Integer id) {
+	public List<TweetResponseDto> getReposts(Long id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<TweetResponseDto> getReposts(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<UserResponseDto> getMentions(Long id) {
+		Tweet tweet = getTweetFromDb(id);
+		return userMapper.entitiesToDtos(tweet.getMentions());
 	}
-
-	@Override
-	public List<UserResponseDto> getMentions(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<HashtagResponseDto> getHashtags(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

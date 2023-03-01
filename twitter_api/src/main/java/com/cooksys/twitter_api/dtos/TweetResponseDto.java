@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class TweetResponseDto {
 	
-	private Integer id;
+	private Long id;
 	
 	private UserResponseDto author;
 	
