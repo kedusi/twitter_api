@@ -238,7 +238,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<TweetResponseDto> getTweets(String username) {
-		List<Tweet> tweets = tweetRepository.findAllByDeletedFalseAndAuthor_Credentials_Username(username);
+		List<Tweet> tweets = getUserFromDatabase(username).getTweets();
 		tweets.sort(Comparator.comparing(Tweet::getPosted).reversed());
 		return tweetMapper.entitiesToDtos(tweets);
 	}

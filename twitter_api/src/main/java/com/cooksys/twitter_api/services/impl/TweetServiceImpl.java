@@ -15,7 +15,6 @@ import com.cooksys.twitter_api.dtos.CredentialsDto;
 import com.cooksys.twitter_api.dtos.HashtagResponseDto;
 import com.cooksys.twitter_api.dtos.TweetRequestDto;
 import com.cooksys.twitter_api.dtos.TweetResponseDto;
-import com.cooksys.twitter_api.dtos.UserRequestDto;
 import com.cooksys.twitter_api.dtos.UserResponseDto;
 import com.cooksys.twitter_api.entities.Credentials;
 import com.cooksys.twitter_api.entities.Hashtag;
@@ -44,7 +43,6 @@ public class TweetServiceImpl implements TweetService {
 	private final HashtagRepository hashtagRepository;
 	private final TweetMapper tweetMapper;
 	private final CredentialsMapper credentialsMapper;
-
 	private final HashtagMapper hashtagMapper;
 	private final UserMapper userMapper;
 	
@@ -79,8 +77,8 @@ public class TweetServiceImpl implements TweetService {
 
 	}
 
-	// Searches a given string (using regex) and returns a list of any #hashtags
-	// found
+	// Searches a given string (using regex) and returns a list of any Hashtags
+	// found (labels exclude # symbols)
 	private List<Hashtag> getHashtagsFromString(String string, Tweet tweet) {
 		Pattern pattern = Pattern.compile("#(\\w+)");
 		Matcher matcher = pattern.matcher(string);
@@ -277,7 +275,6 @@ public class TweetServiceImpl implements TweetService {
 				current = current.getInReplyTo();
 			}
 		}
-		
 		before.sort(Comparator.comparing(Tweet::getPosted));
 		
 		List<Tweet> replies = target.getReplies();
@@ -287,7 +284,6 @@ public class TweetServiceImpl implements TweetService {
 		
 		List<Tweet> after = new ArrayList<>();
 		for (Tweet reply : replies) {
-			// Exclude deleted tweets and target tweet itself
 			if (reply.isDeleted() == false) {
 				after.add(reply);
 			}
