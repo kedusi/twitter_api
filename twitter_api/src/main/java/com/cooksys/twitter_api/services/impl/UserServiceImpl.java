@@ -137,7 +137,7 @@ public class UserServiceImpl implements UserService {
 	
 		
 		if (!userToUpdate.getCredentials().getPassword().equals(userRequestDto.getCredentials().getPassword())) {
-			throw new NotAuthorizedException("Password is incorrect for username: " + username);
+			throw new NotAuthorizedException("Password is incorrect");
 		}
 		
 		/* If the user does not provide a field in profile to update, these will set the new value
@@ -166,7 +166,7 @@ public class UserServiceImpl implements UserService {
 		Credentials credentials = credentialsMapper.requestDtoToEntity(credentialsRequestDto);
 		
 		if (!userToDelete.getCredentials().getPassword().equals(credentials.getPassword())) {
-			throw new NotAuthorizedException("Password is incorrect for username: " + username);
+			throw new NotAuthorizedException("Password is incorrect.");
 		}
 		userToDelete.setDeleted(true);
 		return userMapper.entityToDto(userRepository.saveAndFlush(userToDelete));
@@ -181,7 +181,7 @@ public class UserServiceImpl implements UserService {
 		User currentUser = getUserFromDatabase(credentials.getUsername());
 		
 		if (!currentUser.getCredentials().getPassword().equals(credentials.getPassword())) {
-			throw new NotAuthorizedException("Password is incorrect for username: " + username);
+			throw new NotAuthorizedException("Password is incorrect.");
 		}
 		
 		// Ensures there is not already a following relationship between the 2 users
@@ -207,7 +207,7 @@ public class UserServiceImpl implements UserService {
 		User currentUser = getUserFromDatabase(credentials.getUsername());
 		
 		if (!currentUser.getCredentials().getPassword().equals(credentials.getPassword())) {
-			throw new NotAuthorizedException("Password is incorrect for username: " + username);
+			throw new NotAuthorizedException("Password is incorrect.");
 		}
 		
 		if (!userToUnfollow.getFollowers().contains(currentUser)) {
