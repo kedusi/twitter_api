@@ -94,12 +94,27 @@ public class UserServiceImpl implements UserService {
 		// Check if username already exists in database and not deleted
 		User user = userRepository.findByCredentials_Username(userRequestDto.getCredentials().getUsername());
 		if (user != null && !user.isDeleted()) {
-			throw new BadRequestException("Username is already in use.");
+			throw new BadRequestException("Username is not available.");
 		}
 		
 		// If user has previously been deleted, reactive them rather than create a new user
 		if (user != null && user.isDeleted()) {
 			user.setDeleted(false);
+			
+			// Update the reativated user profile with the profile values in the request
+			if (userRequestDto.getProfile().getEmail() != null) {
+			user.getProfile().setEmail(userRequestDto.getProfile().getEmail());
+			}
+			if (userRequestDto.getProfile().getFirstName() != null) {
+			user.getProfile().setFirstName(userRequestDto.getProfile().getFirstName());
+			}
+			if (userRequestDto.getProfile().getLastName() != null) {
+			user.getProfile().setLastName(userRequestDto.getProfile().getLastName());
+			}
+			if (userRequestDto.getProfile().getPhone() != null) {
+			user.getProfile().setPhone(userRequestDto.getProfile().getPhone());
+			}
+			
 			return userMapper.entityToDto(userRepository.saveAndFlush(user));
 		} 
 		
