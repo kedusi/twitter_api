@@ -22,8 +22,7 @@ public class ValidateServiceImpl implements ValidateService {
 
 	@Override
 	public boolean validateUsernameExists(String username) {
-		// TODO Auto-generated method stub
-		return false;
+		return userRepository.findByCredentials_Username(username) != null;
 	}
 
 	@Override
