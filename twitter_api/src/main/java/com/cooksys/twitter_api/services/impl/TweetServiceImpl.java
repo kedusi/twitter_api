@@ -61,15 +61,17 @@ public class TweetServiceImpl implements TweetService {
 
 	// Checks that user with given username exists and that passwords match
 	private User verifyCredentials(Credentials credentials) {
-		User user = userRepository.findByCredentials_Username(credentials.getUsername());
+		if (credentials.getUsername() == null || credentials.getPassword() == null) {
+			throw new NotAuthorizedException("Must provide username and password");
+		}
 
+		User user = userRepository.findByCredentials_Username(credentials.getUsername());
 		if (user == null) {
 			throw new NotFoundException("User not found");
 		}
-
+		
 		Credentials userCredentials = user.getCredentials();
-
-		if (credentials.getPassword() != userCredentials.getPassword()) {
+		if (!credentials.getPassword().equals(userCredentials.getPassword())) {
 			throw new NotAuthorizedException("Incorrect password provided");
 		}
 
@@ -156,14 +158,18 @@ public class TweetServiceImpl implements TweetService {
 	@Override
 
 	public TweetResponseDto createTweet(TweetRequestDto tweetRequestDto) {
-		Credentials reqCredentials = tweetRequestDto.getCredentials();
+		Credentials credentials = tweetRequestDto.getCredentials();
+		if (credentials == null) {
+			throw new BadRequestException("Must provide credentials");
+		}
+		
 		String content = tweetRequestDto.getContent();
 		
 		if (content == null || content.length() == 0) {
 			throw new BadRequestException("Unable to create tweet without content");
 		}
 
-		User user = verifyCredentials(reqCredentials);
+		User user = verifyCredentials(credentials);
 
 		Tweet tweet = new Tweet();
 		tweet.setDeleted(false);
@@ -200,13 +206,18 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public TweetResponseDto createReply(Long id, TweetRequestDto tweetRequestDto) {
-		Credentials reqCredentials = tweetRequestDto.getCredentials();
+		Credentials credentials = tweetRequestDto.getCredentials();
+		if (credentials == null) {
+			throw new BadRequestException("Must provide credentials");
+		}
+		
+		
 		String content = tweetRequestDto.getContent();
 		if (content == null || content.length() == 0) {
 			throw new BadRequestException("Unable to create reply without content");
 		}
 
-		User user = verifyCredentials(reqCredentials);
+		User user = verifyCredentials(credentials);
 		Tweet tweetRepliedTo = getTweetFromDb(id);
 
 		Tweet tweet = new Tweet();
