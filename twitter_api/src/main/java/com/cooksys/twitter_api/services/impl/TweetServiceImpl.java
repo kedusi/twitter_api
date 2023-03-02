@@ -2,6 +2,7 @@ package com.cooksys.twitter_api.services.impl;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -60,15 +61,17 @@ public class TweetServiceImpl implements TweetService {
 
 	// Checks that user with given username exists and that passwords match
 	private User verifyCredentials(Credentials credentials) {
-		User user = userRepository.findByCredentials_Username(credentials.getUsername());
+		if (credentials.getUsername() == null || credentials.getPassword() == null) {
+			throw new NotAuthorizedException("Must provide username and password");
+		}
 
+		User user = userRepository.findByCredentials_Username(credentials.getUsername());
 		if (user == null) {
 			throw new NotFoundException("User not found");
 		}
-
+		
 		Credentials userCredentials = user.getCredentials();
-
-		if (credentials.getPassword() != userCredentials.getPassword()) {
+		if (!credentials.getPassword().equals(userCredentials.getPassword())) {
 			throw new NotAuthorizedException("Incorrect password provided");
 		}
 
@@ -155,14 +158,18 @@ public class TweetServiceImpl implements TweetService {
 	@Override
 
 	public TweetResponseDto createTweet(TweetRequestDto tweetRequestDto) {
-		Credentials reqCredentials = tweetRequestDto.getCredentials();
+		Credentials credentials = tweetRequestDto.getCredentials();
+		if (credentials == null) {
+			throw new BadRequestException("Must provide credentials");
+		}
+		
 		String content = tweetRequestDto.getContent();
 		
 		if (content == null || content.length() == 0) {
 			throw new BadRequestException("Unable to create tweet without content");
 		}
 
-		User user = verifyCredentials(reqCredentials);
+		User user = verifyCredentials(credentials);
 
 		Tweet tweet = new Tweet();
 		tweet.setDeleted(false);
@@ -199,13 +206,18 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public TweetResponseDto createReply(Long id, TweetRequestDto tweetRequestDto) {
-		Credentials reqCredentials = tweetRequestDto.getCredentials();
+		Credentials credentials = tweetRequestDto.getCredentials();
+		if (credentials == null) {
+			throw new BadRequestException("Must provide credentials");
+		}
+		
+		
 		String content = tweetRequestDto.getContent();
 		if (content == null || content.length() == 0) {
 			throw new BadRequestException("Unable to create reply without content");
 		}
 
-		User user = verifyCredentials(reqCredentials);
+		User user = verifyCredentials(credentials);
 		Tweet tweetRepliedTo = getTweetFromDb(id);
 
 		Tweet tweet = new Tweet();
@@ -216,7 +228,16 @@ public class TweetServiceImpl implements TweetService {
 		tweet.setInReplyTo(tweetRepliedTo);
 		tweet.setHashtags(getHashtagsFromString(content, tweet));
 		tweet.setMentions(getMentionsFromString(content, tweet));
-		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweet));
+		
+		Tweet savedReply = tweetRepository.saveAndFlush(tweet);
+		
+		// Add new reply to replies list on tweetRepliedTo
+		List<Tweet> replies = tweetRepliedTo.getReplies();
+		replies.add(savedReply);
+		tweetRepliedTo.setReplies(replies);
+		tweetRepository.saveAndFlush(tweetRepliedTo);
+		
+		return tweetMapper.entityToDto(savedReply);
 	}
 
 	@Override
@@ -239,8 +260,35 @@ public class TweetServiceImpl implements TweetService {
 	
 	@Override
 	public ContextDto getContext(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		// target = tweet w/ given id
+		// before = the chain of replies leading to the target tweet
+		// after = the chain of replies following the target tweet
+		// All branches of replies must be flattened into single list
+		// Deleted tweets should be excluded, but non-deleted replies to deleted tweets should be included
+		
+		Tweet target = getTweetFromDb(id);
+		
+		List<Tweet> before = tweetRepository.findAllByInReplyTo_id(id);
+		before.sort(Comparator.comparing(Tweet::getPosted));
+		
+		List<Tweet> replies = target.getReplies();
+		for (Tweet reply : replies) {
+			replies.addAll(reply.getReplies());
+		}
+		
+		List<Tweet> after = new ArrayList<>();
+		for (Tweet reply : replies) {
+			if (reply.isDeleted() == false) {
+				after.add(reply);
+			}
+		}
+		after.sort(Comparator.comparing(Tweet::getPosted));
+		
+		ContextDto context = new ContextDto();
+		context.setTarget(tweetMapper.entityToDto(target));
+		context.setBefore(tweetMapper.entitiesToDtos(before));
+		context.setAfter(tweetMapper.entitiesToDtos(after));
+		return context;
 	}
 
 	@Override

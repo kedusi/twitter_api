@@ -15,4 +15,7 @@ public interface TweetRepository extends JpaRepository<Tweet, Long> {
 	
 	List<Tweet> findAllByDeletedFalse();
 	
+	// Get all tweets replying to tweet with given id
+	List<Tweet> findAllByInReplyTo_id(Long id);
+	
 }
