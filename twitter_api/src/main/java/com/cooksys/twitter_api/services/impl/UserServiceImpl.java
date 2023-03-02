@@ -227,8 +227,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<TweetResponseDto> getMentions(String username) {
-		// TODO Auto-generated method stub
-		return null;
+		return tweetMapper.entitiesToDtos(getUserFromDatabase(username).getTweetMentions());
 	}
 
 	@Override
