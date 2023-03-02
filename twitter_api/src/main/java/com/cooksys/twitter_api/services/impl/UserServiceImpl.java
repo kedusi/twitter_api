@@ -6,13 +6,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.cooksys.twitter_api.exceptions.NotFoundException;
-import com.cooksys.twitter_api.mappers.CredentialsMapper;
-import com.cooksys.twitter_api.mappers.ProfileMapper;
-import com.cooksys.twitter_api.mappers.TweetMapper;
-import com.cooksys.twitter_api.mappers.UserMapper;
-import com.cooksys.twitter_api.exceptions.BadRequestException;
-import com.cooksys.twitter_api.exceptions.NotAuthorizedException;
 import com.cooksys.twitter_api.dtos.CredentialsDto;
 import com.cooksys.twitter_api.dtos.TweetResponseDto;
 import com.cooksys.twitter_api.dtos.UserRequestDto;
@@ -21,6 +14,13 @@ import com.cooksys.twitter_api.entities.Credentials;
 import com.cooksys.twitter_api.entities.Profile;
 import com.cooksys.twitter_api.entities.Tweet;
 import com.cooksys.twitter_api.entities.User;
+import com.cooksys.twitter_api.exceptions.BadRequestException;
+import com.cooksys.twitter_api.exceptions.NotAuthorizedException;
+import com.cooksys.twitter_api.exceptions.NotFoundException;
+import com.cooksys.twitter_api.mappers.CredentialsMapper;
+import com.cooksys.twitter_api.mappers.ProfileMapper;
+import com.cooksys.twitter_api.mappers.TweetMapper;
+import com.cooksys.twitter_api.mappers.UserMapper;
 import com.cooksys.twitter_api.repositories.TweetRepository;
 import com.cooksys.twitter_api.repositories.UserRepository;
 import com.cooksys.twitter_api.services.UserService;
@@ -39,8 +39,6 @@ public class UserServiceImpl implements UserService {
 	private final TweetRepository tweetRepository;
 
 	// Helper method to verify and return the user from the database
-	// used by:
-	//		getFeed(String username)
 	private User getUserFromDatabase(String username) {
 		User user = userRepository.findByCredentials_Username(username);
 		if (user == null) {
@@ -59,7 +57,7 @@ public class UserServiceImpl implements UserService {
 		if (userRequestDto.getProfile() == null) {
 			throw new BadRequestException("Must provide your profile.");
 		}
-		
+
 		if (userRequestDto.getCredentials().getUsername() == null) {
 			throw new BadRequestException("Must provide your username.");
 		}
@@ -67,8 +65,9 @@ public class UserServiceImpl implements UserService {
 				|| userRequestDto.getCredentials().getPassword().length() == 0) {
 			throw new BadRequestException("Must provide your password.");
 		}
-		
+
 	}
+
 	private void validateCredentials(CredentialsDto credentialsRequestDto) {
 		if (credentialsRequestDto.getUsername() == null) {
 			throw new BadRequestException("Must provide your username.");
@@ -82,7 +81,7 @@ public class UserServiceImpl implements UserService {
 	public List<UserResponseDto> getAllUsers() {
 		return userMapper.entitiesToDtos(userRepository.findAllByDeletedFalse());
 	}
-	
+
 	@Override
 	public UserResponseDto createUser(UserRequestDto userRequestDto) {
 		validateUserRequest(userRequestDto);
@@ -90,34 +89,35 @@ public class UserServiceImpl implements UserService {
 		if (userRequestDto.getProfile().getEmail() == null) {
 			throw new BadRequestException("Must provide your email to create a new user.");
 		}
-		
+
 		// Check if username already exists in database and not deleted
 		User user = userRepository.findByCredentials_Username(userRequestDto.getCredentials().getUsername());
 		if (user != null && !user.isDeleted()) {
 			throw new BadRequestException("Username is not available.");
 		}
-		
-		// If user has previously been deleted, reactive them rather than create a new user
+
+		// If user has previously been deleted, reactive them rather than create a new
+		// user
 		if (user != null && user.isDeleted()) {
 			user.setDeleted(false);
-			
+
 			// Update the reativated user profile with the profile values in the request
 			if (userRequestDto.getProfile().getEmail() != null) {
-			user.getProfile().setEmail(userRequestDto.getProfile().getEmail());
+				user.getProfile().setEmail(userRequestDto.getProfile().getEmail());
 			}
 			if (userRequestDto.getProfile().getFirstName() != null) {
-			user.getProfile().setFirstName(userRequestDto.getProfile().getFirstName());
+				user.getProfile().setFirstName(userRequestDto.getProfile().getFirstName());
 			}
 			if (userRequestDto.getProfile().getLastName() != null) {
-			user.getProfile().setLastName(userRequestDto.getProfile().getLastName());
+				user.getProfile().setLastName(userRequestDto.getProfile().getLastName());
 			}
 			if (userRequestDto.getProfile().getPhone() != null) {
-			user.getProfile().setPhone(userRequestDto.getProfile().getPhone());
+				user.getProfile().setPhone(userRequestDto.getProfile().getPhone());
 			}
-			
+
 			return userMapper.entityToDto(userRepository.saveAndFlush(user));
-		} 
-		
+		}
+
 		User userToSave = userMapper.requestDtoToEntity(userRequestDto);
 		userToSave.setDeleted(false);
 
@@ -134,15 +134,15 @@ public class UserServiceImpl implements UserService {
 		validateUserRequest(userRequestDto);
 		User userToUpdate = getUserFromDatabase(username);
 		Profile profile = profileMapper.requestDtoToEntity(userRequestDto.getProfile());
-	
-		
+
 		if (!userToUpdate.getCredentials().getPassword().equals(userRequestDto.getCredentials().getPassword())) {
 			throw new NotAuthorizedException("Password is incorrect for username: " + username);
 		}
-		
-		/* If the user does not provide a field in profile to update, these will set the new value
-			to the old one
-		*/ 
+
+		/*
+		 * If the user does not provide a field in profile to update, these will set the
+		 * new value to the old one
+		 */
 		if (userRequestDto.getProfile().getEmail() == null) {
 			profile.setEmail(userToUpdate.getProfile().getEmail());
 		}
@@ -164,7 +164,7 @@ public class UserServiceImpl implements UserService {
 	public UserResponseDto deleteUser(String username, CredentialsDto credentialsRequestDto) {
 		User userToDelete = getUserFromDatabase(username);
 		Credentials credentials = credentialsMapper.requestDtoToEntity(credentialsRequestDto);
-		
+
 		if (!userToDelete.getCredentials().getPassword().equals(credentials.getPassword())) {
 			throw new NotAuthorizedException("Password is incorrect for username: " + username);
 		}
@@ -177,13 +177,13 @@ public class UserServiceImpl implements UserService {
 		validateCredentials(credentialsRequestDto);
 		User userToFollow = getUserFromDatabase(username);
 		Credentials credentials = credentialsMapper.requestDtoToEntity(credentialsRequestDto);
-		
+
 		User currentUser = getUserFromDatabase(credentials.getUsername());
-		
+
 		if (!currentUser.getCredentials().getPassword().equals(credentials.getPassword())) {
 			throw new NotAuthorizedException("Password is incorrect for username: " + username);
 		}
-		
+
 		// Ensures there is not already a following relationship between the 2 users
 		for (User u : currentUser.getFollowing()) {
 			if (u.getCredentials().getUsername().equals(userToFollow.getCredentials().getUsername())) {
@@ -191,10 +191,10 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		userToFollow.getFollowers().add(currentUser);
-		
+
 		userMapper.entityToDto(userRepository.saveAndFlush(currentUser));
 		userMapper.entityToDto(userRepository.saveAndFlush(userToFollow));
-      
+
 	}
 
 	@Override
@@ -202,60 +202,41 @@ public class UserServiceImpl implements UserService {
 		validateCredentials(credentialsRequestDto);
 		User userToUnfollow = getUserFromDatabase(username);
 		Credentials credentials = credentialsMapper.requestDtoToEntity(credentialsRequestDto);
-		
-		
+
 		User currentUser = getUserFromDatabase(credentials.getUsername());
-		
+
 		if (!currentUser.getCredentials().getPassword().equals(credentials.getPassword())) {
 			throw new NotAuthorizedException("Password is incorrect for username: " + username);
 		}
-		
+
 		if (!userToUnfollow.getFollowers().contains(currentUser)) {
 			throw new BadRequestException("You do not follow this user.");
 		}
-		
+
 		userToUnfollow.getFollowers().remove(currentUser);
-		
+
 		userMapper.entityToDto(userRepository.saveAndFlush(currentUser));
 		userMapper.entityToDto(userRepository.saveAndFlush(userToUnfollow));
 	}
-	
+
 	// Helper for getting list of tweets from list of users
-	private List<Tweet> getTweetsRepostsRepliesFromUsers(List<User> users) {
+	private List<Tweet> getTweetsFromUsers(List<User> users) {
 		List<Tweet> tweets = new ArrayList<>();
-		for(User user : users) {
-			
+		for (User user : users) {
 			tweets.addAll(user.getTweets());
-			// TODO:
-			// Add all reposts and replies
 		}
 		return tweets;
-	}
-	
-	// Helper for returning list of tweets in reverse chronological order
-	private List<Tweet> sortRevChron(List<Tweet> tweets) {
-		return tweets.stream().sorted((t1, t2) -> t2.getPosted().compareTo(t1.getPosted())).toList();
 	}
 
 	@Override
 	public List<TweetResponseDto> getFeed(String username) {
-//		TODO:
-//		Retrieves all (non-deleted) tweets authored by the user with the given username,
-//		as well as all (non-deleted) tweets authored by users the given user is following.
-//		This includes simple tweets, reposts, and replies. The tweets should appear in
-//		reverse-chronological order. If no active user with that username exists (deleted
-//		or never created), an error should be sent in lieu of a response.
-	//
-//		Response
-//		['Tweet']
-		
-		// get user authored tweets
 		User user = getUserFromDatabase(username);
+		System.out.println(user.getCredentials().getUsername());
 		List<Tweet> tweets = user.getTweets();
-				
-		// add tweets from following
-		tweets.addAll(getTweetsRepostsRepliesFromUsers(user.getFollowing()));
-		return tweetMapper.entitiesToDtos(sortRevChron(tweets));
+
+		tweets.addAll(getTweetsFromUsers(user.getFollowing()));
+		tweets.sort(Comparator.comparing(Tweet::getPosted).reversed());
+		return tweetMapper.entitiesToDtos(tweets);
 	}
 
 	@Override

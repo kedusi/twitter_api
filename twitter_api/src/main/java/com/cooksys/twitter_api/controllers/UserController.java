@@ -65,15 +65,6 @@ public class UserController {
 	}
 	
 	@GetMapping("/@{username}/feed")
-//	TODO:
-//	Retrieves all (non-deleted) tweets authored by the user with the given username,
-//	as well as all (non-deleted) tweets authored by users the given user is following.
-//	This includes simple tweets, reposts, and replies. The tweets should appear in
-//	reverse-chronological order. If no active user with that username exists (deleted
-//	or never created), an error should be sent in lieu of a response.
-//
-//	Response
-//	['Tweet']
 	public List<TweetResponseDto> getFeed(@PathVariable String username) {
 		return userService.getFeed(username);
 	}
