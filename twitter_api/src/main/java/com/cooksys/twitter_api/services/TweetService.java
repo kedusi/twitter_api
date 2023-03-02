@@ -12,30 +12,30 @@ import com.cooksys.twitter_api.dtos.UserResponseDto;
 
 public interface TweetService {
 
-	public List<TweetResponseDto> getAllTweets();
+	List<TweetResponseDto> getAllTweets();
 	
-	public TweetResponseDto createTweet(TweetRequestDto tweetRequestDto);
+	TweetResponseDto createTweet(TweetRequestDto tweetRequestDto);
 
-	public TweetResponseDto getTweet(Long id);
+	TweetResponseDto getTweet(Long id);
 	
-	public TweetResponseDto deleteTweet(Long id, CredentialsDto credentialsRequestDto);
+	TweetResponseDto deleteTweet(Long id, CredentialsDto credentialsRequestDto);
 	
-	public void likeTweet(Long id, UserRequestDto userRequestDto);
+	void likeTweet(Long id, CredentialsDto credentialsDto);
 	
-	public TweetResponseDto createReply(Long id, TweetRequestDto tweetRequestDto);
+	TweetResponseDto createReply(Long id, TweetRequestDto tweetRequestDto);
 	
-	public TweetResponseDto createRepost(Long id, CredentialsDto credentialsRequestDto);
+	TweetResponseDto createRepost(Long id, CredentialsDto credentialsRequestDto);
 	
-	public List<HashtagResponseDto> getHashtags(Long id);
+	List<HashtagResponseDto> getHashtags(Long id);
 
-	public List<UserResponseDto> getLikes(Long id);
+	List<UserResponseDto> getLikes(Long id);
 	
-	public ContextDto getContext(Long id);
+	ContextDto getContext(Long id);
 
-	public List<TweetResponseDto> getReplies(Long id);
+	List<TweetResponseDto> getReplies(Long id);
 
-	public List<TweetResponseDto> getReposts(Long id);
+	List<TweetResponseDto> getReposts(Long id);
 
-	public List<UserResponseDto> getMentions(Long id);
+	List<UserResponseDto> getMentions(Long id);
 
 }

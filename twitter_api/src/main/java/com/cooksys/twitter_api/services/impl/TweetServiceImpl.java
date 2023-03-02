@@ -199,7 +199,7 @@ public class TweetServiceImpl implements TweetService {
 	}
 
 	@Override
-	public void likeTweet(Long id, UserRequestDto userRequestDto) {
+	public void likeTweet(Long id, CredentialsDto credentialsDto) {
 		// TODO Auto-generated method stub
 
 	}
