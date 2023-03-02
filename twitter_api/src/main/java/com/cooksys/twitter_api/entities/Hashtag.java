@@ -27,7 +27,6 @@ public class Hashtag {
 	private Long id;
 	
 	@Column(unique = true)
-	// TODO: Make hashtag label case-insensitive. Might need derived queries.
 	private String label;
 	
 	@CreationTimestamp

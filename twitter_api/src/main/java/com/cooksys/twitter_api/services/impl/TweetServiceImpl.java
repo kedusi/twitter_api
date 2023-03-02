@@ -93,7 +93,7 @@ public class TweetServiceImpl implements TweetService {
 
 		for (String match : matches) {
 			// Get hashtag from DB
-			Hashtag hashtag = hashtagRepository.findByLabel(match);
+			Hashtag hashtag = hashtagRepository.findByLabelIgnoreCase(match);
 			long now = System.currentTimeMillis();
 
 			// If hashtag doesn't exist in DB, create and add
@@ -102,7 +102,7 @@ public class TweetServiceImpl implements TweetService {
 				List<Tweet> tweets = new ArrayList<>();
 				tweets.add(tweet);
 
-				hashtagToSave.setLabel(match.toLowerCase());
+				hashtagToSave.setLabel(match);
 				hashtagToSave.setFirstUsed(new Timestamp(now));
 				hashtagToSave.setLastUsed(new Timestamp(now));
 				hashtagToSave.setTweets(tweets);
@@ -288,7 +288,7 @@ public class TweetServiceImpl implements TweetService {
 		List<Tweet> after = new ArrayList<>();
 		for (Tweet reply : replies) {
 			// Exclude deleted tweets and target tweet itself
-			if (reply.isDeleted() == false && !reply.equals(target)) {
+			if (reply.isDeleted() == false) {
 				after.add(reply);
 			}
 		}
