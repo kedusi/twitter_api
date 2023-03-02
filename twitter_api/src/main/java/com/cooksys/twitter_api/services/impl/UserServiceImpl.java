@@ -1,6 +1,7 @@
 package com.cooksys.twitter_api.services.impl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -221,8 +222,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<TweetResponseDto> getTweets(String username) {
-		// TODO Auto-generated method stub
-				return null;
+		List<Tweet> tweets = tweetRepository.findAllByDeletedFalseAndAuthor_Credentials_Username(username);
+		tweets.sort(Comparator.comparing(Tweet::getPosted).reversed());
+		return tweetMapper.entitiesToDtos(tweets);
 	}
 
 	@Override
