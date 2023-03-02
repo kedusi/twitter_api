@@ -248,7 +248,7 @@ public class TweetServiceImpl implements TweetService {
 		
 		Tweet target = getTweetFromDb(id);
 		
-		List<Tweet> before = tweetRepository.findAllByReplyTo_id(id);
+		List<Tweet> before = tweetRepository.findAllByInReplyTo_id(id);
 		before.sort(Comparator.comparing(Tweet::getPosted));
 		
 		List<Tweet> replies = target.getReplies();
