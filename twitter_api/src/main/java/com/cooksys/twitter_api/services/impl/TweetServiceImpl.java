@@ -2,6 +2,7 @@ package com.cooksys.twitter_api.services.impl;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -239,8 +240,35 @@ public class TweetServiceImpl implements TweetService {
 	
 	@Override
 	public ContextDto getContext(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		// target = tweet w/ given id
+		// before = the chain of replies leading to the target tweet
+		// after = the chain of replies following the target tweet
+		// All branches of replies must be flattened into single list
+		// Deleted tweets should be excluded, but non-deleted replies to deleted tweets should be included
+		
+		Tweet target = getTweetFromDb(id);
+		
+		List<Tweet> before = tweetRepository.findAllByReplyTo_id(id);
+		before.sort(Comparator.comparing(Tweet::getPosted));
+		
+		List<Tweet> replies = target.getReplies();
+		for (Tweet reply : replies) {
+			replies.addAll(reply.getReplies());
+		}
+		
+		List<Tweet> after = new ArrayList<>();
+		for (Tweet reply : replies) {
+			if (reply.isDeleted() == false) {
+				after.add(reply);
+			}
+		}
+		after.sort(Comparator.comparing(Tweet::getPosted));
+		
+		ContextDto context = new ContextDto();
+		context.setTarget(tweetMapper.entityToDto(target));
+		context.setBefore(tweetMapper.entitiesToDtos(before));
+		context.setAfter(tweetMapper.entitiesToDtos(after));
+		return context;
 	}
 
 	@Override
