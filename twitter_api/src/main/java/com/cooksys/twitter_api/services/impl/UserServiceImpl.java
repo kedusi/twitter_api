@@ -91,11 +91,18 @@ public class UserServiceImpl implements UserService {
 			throw new BadRequestException("Must provide your email to create a new user.");
 		}
 		
-		// Check if username already exists in database
+		// Check if username already exists in database and not deleted
 		User user = userRepository.findByCredentials_Username(userRequestDto.getCredentials().getUsername());
-		if (user != null) {
+		if (user != null && !user.isDeleted()) {
 			throw new BadRequestException("Username is already in use.");
 		}
+		
+		// If user has previously been deleted, reactive them rather than create a new user
+		if (user != null && user.isDeleted()) {
+			user.setDeleted(false);
+			return userMapper.entityToDto(userRepository.saveAndFlush(user));
+		} 
+		
 		User userToSave = userMapper.requestDtoToEntity(userRequestDto);
 		userToSave.setDeleted(false);
 

@@ -1,4 +1,4 @@
-package com.cooksys.twitter_api;
+/*package com.cooksys.twitter_api;
 
 import java.util.Arrays;
 import java.util.List;
@@ -268,3 +268,4 @@ public class DatabaseSeeder implements CommandLineRunner {
     userRepository.saveAndFlush(user1);
   }
 }
+*/
