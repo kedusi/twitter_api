@@ -268,7 +268,16 @@ public class TweetServiceImpl implements TweetService {
 		
 		Tweet target = getTweetFromDb(id);
 		
-		List<Tweet> before = tweetRepository.findAllByInReplyTo_id(id);
+		// Get reply chain before target
+		List<Tweet> before = new ArrayList<>();
+		if (target.getInReplyTo() != null) {
+			Tweet current = target.getInReplyTo();
+			while (current != null) {
+				before.add(current);
+				current = current.getInReplyTo();
+			}
+		}
+		
 		before.sort(Comparator.comparing(Tweet::getPosted));
 		
 		List<Tweet> replies = target.getReplies();
@@ -278,15 +287,16 @@ public class TweetServiceImpl implements TweetService {
 		
 		List<Tweet> after = new ArrayList<>();
 		for (Tweet reply : replies) {
-			if (reply.isDeleted() == false) {
+			// Exclude deleted tweets and target tweet itself
+			if (reply.isDeleted() == false && !reply.equals(target)) {
 				after.add(reply);
 			}
 		}
 		after.sort(Comparator.comparing(Tweet::getPosted));
 		
 		ContextDto context = new ContextDto();
-		context.setTarget(tweetMapper.entityToDto(target));
 		context.setBefore(tweetMapper.entitiesToDtos(before));
+		context.setTarget(tweetMapper.entityToDto(target));
 		context.setAfter(tweetMapper.entitiesToDtos(after));
 		return context;
 	}
