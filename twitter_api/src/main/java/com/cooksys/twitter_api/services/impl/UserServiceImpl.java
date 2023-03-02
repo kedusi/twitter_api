@@ -68,10 +68,6 @@ public class UserServiceImpl implements UserService {
 			throw new BadRequestException("Must provide your password.");
 		}
 		
-		if (userRequestDto.getProfile().getEmail() == null) {
-			throw new BadRequestException("Must provide your email.");
-		}
-		
 	}
 	private void validateCredentials(CredentialsDto credentialsRequestDto) {
 		if (credentialsRequestDto.getUsername() == null) {
@@ -91,6 +87,9 @@ public class UserServiceImpl implements UserService {
 	public UserResponseDto createUser(UserRequestDto userRequestDto) {
 		validateUserRequest(userRequestDto);
 		validateCredentials(userRequestDto.getCredentials());
+		if (userRequestDto.getProfile().getEmail() == null) {
+			throw new BadRequestException("Must provide your email to create a new user.");
+		}
 		
 		// Check if username already exists in database
 		User user = userRepository.findByCredentials_Username(userRequestDto.getCredentials().getUsername());
@@ -113,12 +112,29 @@ public class UserServiceImpl implements UserService {
 		validateUserRequest(userRequestDto);
 		User userToUpdate = getUserFromDatabase(username);
 		Profile profile = profileMapper.requestDtoToEntity(userRequestDto.getProfile());
+	
 		
 		if (!userToUpdate.getCredentials().getPassword().equals(userRequestDto.getCredentials().getPassword())) {
 			throw new NotAuthorizedException("Password is incorrect for username: " + username);
 		}
-		userToUpdate.setProfile(profile);
 		
+		/* If the user does not provide a field in profile to update, these will set the new value
+			to the old one
+		*/ 
+		if (userRequestDto.getProfile().getEmail() == null) {
+			profile.setEmail(userToUpdate.getProfile().getEmail());
+		}
+		if (userRequestDto.getProfile().getFirstName() == null) {
+			profile.setFirstName(userToUpdate.getProfile().getFirstName());
+		}
+		if (userRequestDto.getProfile().getLastName() == null) {
+			profile.setLastName(userToUpdate.getProfile().getLastName());
+		}
+		if (userRequestDto.getProfile().getPhone() == null) {
+			profile.setPhone(userToUpdate.getProfile().getPhone());
+		}
+		userToUpdate.setProfile(profile);
+
 		return userMapper.entityToDto(userRepository.saveAndFlush(userToUpdate));
 	}
 
