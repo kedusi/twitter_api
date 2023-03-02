@@ -181,8 +181,11 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public TweetResponseDto getTweet(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		Optional<Tweet> tweet = tweetRepository.findById(id);
+		if(tweet.isEmpty()) {
+			throw new NotFoundException("No tweet exists with that ID.");
+		}
+		return tweetMapper.entityToDto(tweet.get());
 	}
 
 	@Override
