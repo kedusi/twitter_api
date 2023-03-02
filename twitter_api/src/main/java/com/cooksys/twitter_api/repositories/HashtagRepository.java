@@ -8,6 +8,6 @@ import com.cooksys.twitter_api.entities.Hashtag;
 @Repository
 public interface HashtagRepository extends JpaRepository<Hashtag, Long> {
 	
-	Hashtag findByLabel(String label);
+	Hashtag findByLabelIgnoreCase(String label);
 	
 }
