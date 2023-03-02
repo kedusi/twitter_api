@@ -1,5 +1,6 @@
 package com.cooksys.twitter_api.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.cooksys.twitter_api.exceptions.NotFoundException;
 import com.cooksys.twitter_api.mappers.CredentialsMapper;
 import com.cooksys.twitter_api.mappers.ProfileMapper;
+import com.cooksys.twitter_api.mappers.TweetMapper;
 import com.cooksys.twitter_api.mappers.UserMapper;
 import com.cooksys.twitter_api.exceptions.BadRequestException;
 import com.cooksys.twitter_api.exceptions.NotAuthorizedException;
@@ -16,7 +18,9 @@ import com.cooksys.twitter_api.dtos.UserRequestDto;
 import com.cooksys.twitter_api.dtos.UserResponseDto;
 import com.cooksys.twitter_api.entities.Credentials;
 import com.cooksys.twitter_api.entities.Profile;
+import com.cooksys.twitter_api.entities.Tweet;
 import com.cooksys.twitter_api.entities.User;
+import com.cooksys.twitter_api.repositories.TweetRepository;
 import com.cooksys.twitter_api.repositories.UserRepository;
 import com.cooksys.twitter_api.services.UserService;
 
@@ -30,8 +34,12 @@ public class UserServiceImpl implements UserService {
 	private final UserMapper userMapper;
 	private final CredentialsMapper credentialsMapper;
 	private final ProfileMapper profileMapper;
+	private final TweetMapper tweetMapper;
+	private final TweetRepository tweetRepository;
 
 	// Helper method to verify and return the user from the database
+	// used by:
+	//		getFeed(String username)
 	private User getUserFromDatabase(String username) {
 		User user = userRepository.findByCredentials_Username(username);
 		if (user == null) {
@@ -175,11 +183,43 @@ public class UserServiceImpl implements UserService {
 		userMapper.entityToDto(userRepository.saveAndFlush(userToUnfollow));
      
 	}
+	
+	// Helper for getting list of tweets from list of users
+	private List<Tweet> getTweetsRepostsRepliesFromUsers(List<User> users) {
+		List<Tweet> tweets = new ArrayList<>();
+		for(User user : users) {
+			
+			tweets.addAll(user.getTweets());
+			// TODO:
+			// Add all reposts and replies
+		}
+		return tweets;
+	}
+	
+	// Helper for returning list of tweets in reverse chronological order
+	private List<Tweet> sortRevChron(List<Tweet> tweets) {
+		return tweets.stream().sorted((t1, t2) -> t2.getPosted().compareTo(t1.getPosted())).toList();
+	}
 
 	@Override
 	public List<TweetResponseDto> getFeed(String username) {
-		// TODO Auto-generated method stub
-		return null;
+//		TODO:
+//		Retrieves all (non-deleted) tweets authored by the user with the given username,
+//		as well as all (non-deleted) tweets authored by users the given user is following.
+//		This includes simple tweets, reposts, and replies. The tweets should appear in
+//		reverse-chronological order. If no active user with that username exists (deleted
+//		or never created), an error should be sent in lieu of a response.
+	//
+//		Response
+//		['Tweet']
+		
+		// get user authored tweets
+		User user = getUserFromDatabase(username);
+		List<Tweet> tweets = user.getTweets();
+				
+		// add tweets from following
+		tweets.addAll(getTweetsRepostsRepliesFromUsers(user.getFollowing()));
+		return tweetMapper.entitiesToDtos(sortRevChron(tweets));
 	}
 
 	@Override
