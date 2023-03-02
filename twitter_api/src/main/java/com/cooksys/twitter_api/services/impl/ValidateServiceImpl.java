@@ -27,10 +27,7 @@ public class ValidateServiceImpl implements ValidateService {
 
 	@Override
 	public boolean validateUsernameAvailability(String username) {
-		if (userRepository.findByCredentials_Username(username) != null) {
-			return false;
-		}
-		return true;
+		return userRepository.findByCredentials_Username(username) == null;
 	}
 
 
