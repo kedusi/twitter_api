@@ -228,7 +228,16 @@ public class TweetServiceImpl implements TweetService {
 		tweet.setInReplyTo(tweetRepliedTo);
 		tweet.setHashtags(getHashtagsFromString(content, tweet));
 		tweet.setMentions(getMentionsFromString(content, tweet));
-		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweet));
+		
+		Tweet savedReply = tweetRepository.saveAndFlush(tweet);
+		
+		// Add new reply to replies list on tweetRepliedTo
+		List<Tweet> replies = tweetRepliedTo.getReplies();
+		replies.add(savedReply);
+		tweetRepliedTo.setReplies(replies);
+		tweetRepository.saveAndFlush(tweetRepliedTo);
+		
+		return tweetMapper.entityToDto(savedReply);
 	}
 
 	@Override
