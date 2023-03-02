@@ -96,8 +96,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserResponseDto getOneUser(String username) {
-		User user = getUserFromDatabase(username);
-		return userMapper.entityToDto(user);
+		return userMapper.entityToDto(getUserFromDatabase(username));
 	}
 
 	@Override
@@ -140,11 +139,10 @@ public class UserServiceImpl implements UserService {
 		
 		// Ensures there is not already a following relationship between the 2 users
 		for (User u : currentUser.getFollowing()) {
-			if (u.getCredentials().getUsername().equalsIgnoreCase(userToFollow.getCredentials().getUsername())) {
+			if (u.getCredentials().getUsername().equals(userToFollow.getCredentials().getUsername())) {
 				throw new BadRequestException("You already follow this user.");
 			}
 		}
-		
 		userToFollow.getFollowers().add(currentUser);
 		
 		userMapper.entityToDto(userRepository.saveAndFlush(currentUser));
@@ -173,7 +171,6 @@ public class UserServiceImpl implements UserService {
 		
 		userMapper.entityToDto(userRepository.saveAndFlush(currentUser));
 		userMapper.entityToDto(userRepository.saveAndFlush(userToUnfollow));
-     
 	}
 
 	@Override
@@ -185,7 +182,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<TweetResponseDto> getTweets(String username) {
 		// TODO Auto-generated method stub
-		return null;
+				return null;
 	}
 
 	@Override
@@ -196,14 +193,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<UserResponseDto> getFollowers(String username) {
-		User user = getUserFromDatabase(username);
-		return userMapper.entitiesToDtos(user.getFollowers());
+		return userMapper.entitiesToDtos(getUserFromDatabase(username).getFollowers());
 	}
 
 	@Override
 	public List<UserResponseDto> getFollowing(String username) {
-		User user = getUserFromDatabase(username);
-		return userMapper.entitiesToDtos(user.getFollowing());
+		return userMapper.entitiesToDtos(getUserFromDatabase(username).getFollowing());
 	}
 
 }
