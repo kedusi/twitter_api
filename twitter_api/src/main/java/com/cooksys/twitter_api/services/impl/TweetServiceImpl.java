@@ -210,12 +210,13 @@ public class TweetServiceImpl implements TweetService {
 		}
 		Tweet tweetToLike = tweet.get();
 
-		Optional<User> user = userRepository.findByDeletedFalseAndCredentials(credentialsMapper.requestDtoToEntity(credentialsDto));
+		Optional<User> user = userRepository
+				.findByDeletedFalseAndCredentials(credentialsMapper.requestDtoToEntity(credentialsDto));
 		if (user.isEmpty()) {
 			throw new NotFoundException("Cannot like that tweet: credentials do not match a current user.");
 		}
 		User userToAdd = user.get();
-		
+
 		tweetToLike.getLikes().add(userToAdd);
 		tweetRepository.saveAndFlush(tweetToLike);
 	}
@@ -257,8 +258,46 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public TweetResponseDto createRepost(Long id, CredentialsDto credentialsRequestDto) {
-		// TODO Auto-generated method stub
-		return null;
+		/*
+		 * Creates a repost of the tweet with the given id. The author of the repost
+		 * should match the credentials provided in the request body. If the given tweet
+		 * is deleted or otherwise doesn't exist, or the given credentials do not match
+		 * an active user in the database, an error should be sent in lieu of a
+		 * response.
+		 * 
+		 * Because this creates a repost tweet, content is not allowed. Additionally,
+		 * notice that the repostOf property is not provided by the request. The server
+		 * must create that relationship.
+		 * 
+		 * The response should contain the newly-created tweet.
+		 * 
+		 * Request 'Credentials' Response 'Tweet'
+		 */
+
+		Credentials credentials = credentialsMapper.requestDtoToEntity(credentialsRequestDto);
+		if (credentials == null) {
+			throw new BadRequestException("Must provide credentials");
+		}
+		User repostAuthor = verifyCredentials(credentials);
+		
+		Optional<Tweet> tweet = tweetRepository.findById(id);
+		if(tweet.isEmpty()) {
+			throw new NotFoundException("Could not repost: tweet with id " + id + " does not exist.");
+		}
+		
+		Tweet tweetToRepost = tweet.get();
+		
+		if(tweetToRepost.isDeleted()) {
+			throw new NotFoundException("Could not repost: tweet with id " + id + " has been deleted.");
+		}
+		
+		Tweet repost = new Tweet();
+		repost.setAuthor(repostAuthor);
+		repost.setPosted(null);
+		repost.setRepostOf(tweetToRepost);
+		repost.setPosted(new Timestamp(System.currentTimeMillis()));
+		
+		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(repost));
 	}
 
 	@Override
