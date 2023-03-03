@@ -382,24 +382,18 @@ public class TweetServiceImpl implements TweetService {
 		 * 
 		 * Deleted replies to the tweet should be excluded from the response.
 		 */
-		Optional<Tweet> tweet = tweetRepository.findById(id);
-		if (tweet.isEmpty()) {
-			throw new NotFoundException("Could not get replies: tweet with id " + id + " does not exist.");
+		Tweet tweet = getTweetFromDb(id);
+		List<Tweet> replies = tweet.getReplies();
+		List<Tweet> nonDeletedReplies = new ArrayList<>();
+
+		for (Tweet reply : replies) {
+			Optional<Tweet> nonDeletedReply = tweetRepository.findByIdAndDeletedFalse(reply.getId());
+			if (nonDeletedReply.isPresent()) {
+				nonDeletedReplies.add(nonDeletedReply.get());
+			}
 		}
 
-		Tweet tweetOfWhichToGetReplies = tweet.get();
-		if (tweetOfWhichToGetReplies.isDeleted()) {
-			throw new NotFoundException("Could not get replies: tweet with id " + id + " has been deleted.");
-		}
-		List<Tweet> replies = tweetRepository.findAllByDeletedFalseAndInReplyTo(id);
-		// 500 error: Somewhere I am passing Long (specifically the {id} from the url)
-		// where Tweet is expected. Why does the compiler not see this?
-
-		if(replies.isEmpty()) {
-			return null;
-		}
-		return tweetMapper.entitiesToDtos(replies);
-//		return null;
+		return tweetMapper.entitiesToDtos(nonDeletedReplies);
 	}
 
 	@Override
