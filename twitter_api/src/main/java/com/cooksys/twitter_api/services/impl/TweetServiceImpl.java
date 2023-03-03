@@ -45,8 +45,9 @@ public class TweetServiceImpl implements TweetService {
 	private final CredentialsMapper credentialsMapper;
 	private final HashtagMapper hashtagMapper;
 	private final UserMapper userMapper;
-	
-	// Retrieves a Tweet entity with given id from the database and throws an exception if not found
+
+	// Retrieves a Tweet entity with given id from the database and throws an
+	// exception if not found
 	private Tweet getTweetFromDb(Long id) {
 		Optional<Tweet> optionalTweet = tweetRepository.findByIdAndDeletedFalse(id);
 
@@ -67,7 +68,7 @@ public class TweetServiceImpl implements TweetService {
 		if (user == null) {
 			throw new NotFoundException("User not found");
 		}
-		
+
 		Credentials userCredentials = user.getCredentials();
 		if (!credentials.getPassword().equals(userCredentials.getPassword())) {
 			throw new NotAuthorizedException("Incorrect password provided");
@@ -111,7 +112,7 @@ public class TweetServiceImpl implements TweetService {
 				tweets.add(tweet);
 				hashtag.setTweets(tweets);
 				hashtag.setLastUsed(new Timestamp(now));
-				
+
 				hashtags.add(hashtagRepository.saveAndFlush(hashtag));
 			}
 		}
@@ -162,9 +163,9 @@ public class TweetServiceImpl implements TweetService {
 		if (credentials == null) {
 			throw new BadRequestException("Must provide credentials");
 		}
-		
+
 		String content = tweetRequestDto.getContent();
-		
+
 		if (content == null || content.length() == 0) {
 			throw new BadRequestException("Unable to create tweet without content");
 		}
@@ -184,7 +185,7 @@ public class TweetServiceImpl implements TweetService {
 	@Override
 	public TweetResponseDto getTweet(Long id) {
 		Optional<Tweet> tweet = tweetRepository.findById(id);
-		if(tweet.isEmpty()) {
+		if (tweet.isEmpty()) {
 			throw new NotFoundException("No tweet exists with that ID.");
 		}
 		return tweetMapper.entityToDto(tweet.get());
@@ -203,8 +204,19 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public void likeTweet(Long id, CredentialsDto credentialsDto) {
-		// TODO Auto-generated method stub
+		Optional<Tweet> tweet = tweetRepository.findByIdAndDeletedFalse(id);
+		if (tweet.isEmpty()) {
+			throw new NotFoundException("Cannot like that tweet: could not find tweet with id " + id + ".");
+		}
+		Tweet tweetToLike = tweet.get();
 
+		Optional<User> user = userRepository.findByDeletedFalseAndCredentials(credentialsDto);
+		if (user.isEmpty()) {
+			throw new NotFoundException("Cannot like that tweet: credentials do not match a current user.");
+		}
+		User userToAdd = user.get();
+		
+		tweetToLike.getLikes().add(userToAdd);
 	}
 
 	@Override
@@ -213,8 +225,7 @@ public class TweetServiceImpl implements TweetService {
 		if (credentials == null) {
 			throw new BadRequestException("Must provide credentials");
 		}
-		
-		
+
 		String content = tweetRequestDto.getContent();
 		if (content == null || content.length() == 0) {
 			throw new BadRequestException("Unable to create reply without content");
@@ -231,15 +242,15 @@ public class TweetServiceImpl implements TweetService {
 		tweet.setInReplyTo(tweetRepliedTo);
 		tweet.setHashtags(getHashtagsFromString(content, tweet));
 		tweet.setMentions(getMentionsFromString(content, tweet));
-		
+
 		Tweet savedReply = tweetRepository.saveAndFlush(tweet);
-		
+
 		// Add new reply to replies list on tweetRepliedTo
 		List<Tweet> replies = tweetRepliedTo.getReplies();
 		replies.add(savedReply);
 		tweetRepliedTo.setReplies(replies);
 		tweetRepository.saveAndFlush(tweetRepliedTo);
-		
+
 		return tweetMapper.entityToDto(savedReply);
 	}
 
@@ -260,17 +271,18 @@ public class TweetServiceImpl implements TweetService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public ContextDto getContext(Long id) {
 		// target = tweet w/ given id
 		// before = the chain of replies leading to the target tweet
 		// after = the chain of replies following the target tweet
 		// All branches of replies must be flattened into single list
-		// Deleted tweets should be excluded, but non-deleted replies to deleted tweets should be included
-		
+		// Deleted tweets should be excluded, but non-deleted replies to deleted tweets
+		// should be included
+
 		Tweet target = getTweetFromDb(id);
-		
+
 		// Get reply chain before target
 		List<Tweet> before = new ArrayList<>();
 		if (target.getInReplyTo() != null) {
@@ -281,12 +293,12 @@ public class TweetServiceImpl implements TweetService {
 			}
 		}
 		before.sort(Comparator.comparing(Tweet::getPosted));
-		
+
 		List<Tweet> replies = target.getReplies();
 		for (Tweet reply : replies) {
 			replies.addAll(reply.getReplies());
 		}
-		
+
 		List<Tweet> after = new ArrayList<>();
 		for (Tweet reply : replies) {
 			if (reply.isDeleted() == false) {
@@ -294,7 +306,7 @@ public class TweetServiceImpl implements TweetService {
 			}
 		}
 		after.sort(Comparator.comparing(Tweet::getPosted));
-		
+
 		ContextDto context = new ContextDto();
 		context.setBefore(tweetMapper.entitiesToDtos(before));
 		context.setTarget(tweetMapper.entityToDto(target));
@@ -313,14 +325,14 @@ public class TweetServiceImpl implements TweetService {
 		Tweet tweet = getTweetFromDb(id);
 		List<Tweet> reposts = tweet.getReposts();
 		List<Tweet> nonDeletedReposts = new ArrayList<>();
-		
+
 		for (Tweet repost : reposts) {
 			Optional<Tweet> nonDeletedRepost = tweetRepository.findByIdAndDeletedFalse(repost.getId());
 			if (nonDeletedRepost.isPresent()) {
 				nonDeletedReposts.add(nonDeletedRepost.get());
 			}
 		}
-		
+
 		return tweetMapper.entitiesToDtos(nonDeletedReposts);
 	}
 
@@ -329,14 +341,14 @@ public class TweetServiceImpl implements TweetService {
 		Tweet tweet = getTweetFromDb(id);
 		List<User> users = tweet.getMentions();
 		List<User> nonDeletedUsers = new ArrayList<>();
-		
+
 		for (User user : users) {
 			Optional<User> nonDeletedUser = userRepository.findByIdAndDeletedFalse(user.getId());
 			if (nonDeletedUser.isPresent()) {
 				nonDeletedUsers.add(nonDeletedUser.get());
 			}
 		}
-		
+
 		return userMapper.entitiesToDtos(nonDeletedUsers);
 	}
 }

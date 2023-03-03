@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.cooksys.twitter_api.dtos.CredentialsDto;
 import com.cooksys.twitter_api.entities.User;
 
 @Repository
@@ -16,4 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	List<User> findAllByDeletedFalse();
 	
 	User findByCredentials_Username(String username);
+
+	Optional<User> findByDeletedFalseAndCredentials(CredentialsDto credentialsDto);
 }
