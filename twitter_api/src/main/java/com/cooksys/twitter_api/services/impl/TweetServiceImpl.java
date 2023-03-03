@@ -315,21 +315,20 @@ public class TweetServiceImpl implements TweetService {
 		 * 
 		 * Deleted users should be excluded from the response.
 		 */
-		
+
 		Optional<Tweet> tweet = tweetRepository.findById(id);
-		if(tweet.isEmpty()) {
+		if (tweet.isEmpty()) {
 			throw new NotFoundException("Could not get likes: tweet with id " + id + " does not exist.");
 		}
-		
+
 		Tweet tweetOfWhichToGetLikes = tweet.get();
-		if(tweetOfWhichToGetLikes.isDeleted()) {
+		if (tweetOfWhichToGetLikes.isDeleted()) {
 			throw new NotFoundException("Could not get likes: tweet with id " + id + " has been deleted.");
 		}
-		
-		
+
 		return userMapper.entitiesToDtos(userRepository.findAllByDeletedFalseAndTweetLikes(tweetOfWhichToGetLikes));
 		// TODO: -KS
-		//	404 with no message
+		// 404 with no message
 	}
 
 	@Override
@@ -376,7 +375,30 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public List<TweetResponseDto> getReplies(Long id) {
-		// TODO Auto-generated method stub
+		/*
+		 * Retrieves the direct replies to the tweet with the given id. If that tweet is
+		 * deleted or otherwise doesn't exist, an error should be sent in lieu of a
+		 * response.
+		 * 
+		 * Deleted replies to the tweet should be excluded from the response.
+		 */
+		Optional<Tweet> tweet = tweetRepository.findById(id);
+		if (tweet.isEmpty()) {
+			throw new NotFoundException("Could not get replies: tweet with id " + id + " does not exist.");
+		}
+
+		Tweet tweetOfWhichToGetReplies = tweet.get();
+		if (tweetOfWhichToGetReplies.isDeleted()) {
+			throw new NotFoundException("Could not get replies: tweet with id " + id + " has been deleted.");
+		}
+//		List<Tweet> replies = tweetRepository.findAllByDeletedFalseAndInReplyTo(id);
+		// 500 error: Somewhere I am passing Long (specifically the {id} from the url)
+		// where Tweet is expected. Why does the compiler not see this?
+
+//		if(replies.isEmpty()) {
+//			return null;
+//		}
+//		return tweetMapper.entitiesToDtos(replies);
 		return null;
 	}
 

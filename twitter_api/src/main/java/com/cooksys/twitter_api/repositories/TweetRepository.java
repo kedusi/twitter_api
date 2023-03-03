@@ -19,5 +19,7 @@ public interface TweetRepository extends JpaRepository<Tweet, Long> {
 	List<Tweet> findAllByDeletedFalseAndAuthor_Credentials_Username(String username);
 
 	List<TweetResponseDto> findAllByDeletedFalseAndHashtags_Label(String label);
+
+	List<Tweet> findAllByDeletedFalseAndInReplyTo(Long id);
 	
 }
