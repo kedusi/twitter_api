@@ -210,13 +210,14 @@ public class TweetServiceImpl implements TweetService {
 		}
 		Tweet tweetToLike = tweet.get();
 
-		Optional<User> user = userRepository.findByDeletedFalseAndCredentials(credentialsDto);
+		Optional<User> user = userRepository.findByDeletedFalseAndCredentials(credentialsMapper.requestDtoToEntity(credentialsDto));
 		if (user.isEmpty()) {
 			throw new NotFoundException("Cannot like that tweet: credentials do not match a current user.");
 		}
 		User userToAdd = user.get();
 		
 		tweetToLike.getLikes().add(userToAdd);
+		tweetRepository.saveAndFlush(tweetToLike);
 	}
 
 	@Override
