@@ -279,24 +279,24 @@ public class TweetServiceImpl implements TweetService {
 			throw new BadRequestException("Must provide credentials");
 		}
 		User repostAuthor = verifyCredentials(credentials);
-		
+
 		Optional<Tweet> tweet = tweetRepository.findById(id);
-		if(tweet.isEmpty()) {
+		if (tweet.isEmpty()) {
 			throw new NotFoundException("Could not repost: tweet with id " + id + " does not exist.");
 		}
-		
+
 		Tweet tweetToRepost = tweet.get();
-		
-		if(tweetToRepost.isDeleted()) {
+
+		if (tweetToRepost.isDeleted()) {
 			throw new NotFoundException("Could not repost: tweet with id " + id + " has been deleted.");
 		}
-		
+
 		Tweet repost = new Tweet();
 		repost.setAuthor(repostAuthor);
 		repost.setPosted(null);
 		repost.setRepostOf(tweetToRepost);
 		repost.setPosted(new Timestamp(System.currentTimeMillis()));
-		
+
 		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(repost));
 	}
 
@@ -308,8 +308,28 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public List<UserResponseDto> getLikes(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		/*
+		 * Retrieves the active users who have liked the tweet with the given id. If
+		 * that tweet is deleted or otherwise doesn't exist, an error should be sent in
+		 * lieu of a response.
+		 * 
+		 * Deleted users should be excluded from the response.
+		 */
+		
+		Optional<Tweet> tweet = tweetRepository.findById(id);
+		if(tweet.isEmpty()) {
+			throw new NotFoundException("Could not get likes: tweet with id " + id + " does not exist.");
+		}
+		
+		Tweet tweetOfWhichToGetLikes = tweet.get();
+		if(tweetOfWhichToGetLikes.isDeleted()) {
+			throw new NotFoundException("Could not get likes: tweet with id " + id + " has been deleted.");
+		}
+		
+		
+		return userMapper.entitiesToDtos(userRepository.findAllByDeletedFalseAndTweetLikes(tweetOfWhichToGetLikes));
+		// TODO: -KS
+		//	404 with no message
 	}
 
 	@Override

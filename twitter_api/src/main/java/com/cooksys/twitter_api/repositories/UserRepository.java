@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.cooksys.twitter_api.dtos.CredentialsDto;
 import com.cooksys.twitter_api.entities.Credentials;
+import com.cooksys.twitter_api.entities.Tweet;
 import com.cooksys.twitter_api.entities.User;
 
 @Repository
@@ -20,4 +21,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	User findByCredentials_Username(String username);
 
 	Optional<User> findByDeletedFalseAndCredentials(Credentials credentials);
+
+	List<User> findAllByDeletedFalseAndTweetLikes(Tweet tweet);
 }
