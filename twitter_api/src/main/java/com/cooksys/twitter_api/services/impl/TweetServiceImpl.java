@@ -148,6 +148,8 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public List<TweetResponseDto> getAllTweets() {
+		// TODO: refactor
+		// this works but I've seen a better way -KS
 		return tweetMapper
 				.entitiesToDtos(tweetRepository.findAllByDeletedFalse().stream().filter(tweet -> !tweet.isDeleted())
 						.sorted((tweet1, tweet2) -> tweet2.getPosted().compareTo(tweet1.getPosted())).toList());

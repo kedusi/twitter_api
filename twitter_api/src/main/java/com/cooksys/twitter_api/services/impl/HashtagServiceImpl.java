@@ -9,7 +9,9 @@ import com.cooksys.twitter_api.dtos.TweetResponseDto;
 import com.cooksys.twitter_api.entities.Hashtag;
 import com.cooksys.twitter_api.entities.Tweet;
 import com.cooksys.twitter_api.mappers.HashtagMapper;
+import com.cooksys.twitter_api.mappers.TweetMapper;
 import com.cooksys.twitter_api.repositories.HashtagRepository;
+import com.cooksys.twitter_api.repositories.TweetRepository;
 import com.cooksys.twitter_api.services.HashtagService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,8 @@ public class HashtagServiceImpl implements HashtagService {
 	
 	private final HashtagRepository hashtagRepository;
 	private final HashtagMapper hashtagMapper;
+	private final TweetRepository tweetRepository;
+	private final TweetMapper tweetMapper;
 
 	@Override
 	public List<HashtagResponseDto> getAllTags() {
@@ -28,7 +32,7 @@ public class HashtagServiceImpl implements HashtagService {
 
 	@Override
 	public List<TweetResponseDto> getTweetsByTag(String label) {
-		// TODO GetTweetsByTag for HTServImpl
+		// TODO: -KS return tweetRepository.findAllByDeletedFalseAndHashtags_Label(label);
 		return null;
 	}
 

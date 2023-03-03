@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.cooksys.twitter_api.dtos.TweetResponseDto;
 import com.cooksys.twitter_api.entities.Tweet;
 
 @Repository
@@ -16,5 +17,7 @@ public interface TweetRepository extends JpaRepository<Tweet, Long> {
 	List<Tweet> findAllByDeletedFalse();
 	
 	List<Tweet> findAllByDeletedFalseAndAuthor_Credentials_Username(String username);
+
+	List<TweetResponseDto> findAllByDeletedFalseAndHashtags_Label(String label);
 	
 }
