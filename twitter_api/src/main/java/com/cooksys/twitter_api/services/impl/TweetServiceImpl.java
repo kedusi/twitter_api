@@ -391,15 +391,15 @@ public class TweetServiceImpl implements TweetService {
 		if (tweetOfWhichToGetReplies.isDeleted()) {
 			throw new NotFoundException("Could not get replies: tweet with id " + id + " has been deleted.");
 		}
-//		List<Tweet> replies = tweetRepository.findAllByDeletedFalseAndInReplyTo(id);
+		List<Tweet> replies = tweetRepository.findAllByDeletedFalseAndInReplyTo(id);
 		// 500 error: Somewhere I am passing Long (specifically the {id} from the url)
 		// where Tweet is expected. Why does the compiler not see this?
 
-//		if(replies.isEmpty()) {
-//			return null;
-//		}
-//		return tweetMapper.entitiesToDtos(replies);
-		return null;
+		if(replies.isEmpty()) {
+			return null;
+		}
+		return tweetMapper.entitiesToDtos(replies);
+//		return null;
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package com.cooksys.twitter_api.services.impl;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -32,8 +34,23 @@ public class HashtagServiceImpl implements HashtagService {
 
 	@Override
 	public List<TweetResponseDto> getTweetsByTag(String label) {
-		// TODO: -KS return tweetRepository.findAllByDeletedFalseAndHashtags_Label(label);
-		return null;
+//		return tweetRepository.findAllByDeletedFalseAndHashtags_Label(label);
+//		List<Tweet> tweets = tweetRepository.findAllByDeletedFalse();
+//		List<Tweet> tweetsByTag = new ArrayList<>();
+//		// TODO: get tweets from hashtag
+//		for (Tweet tweet : tweets) {
+//			for(Hashtag tag : tweet.getHashtags()) {
+//				if(tag.getLabel() == label) {
+//					tweetsByTag.add(tweet);
+//				}
+//			}
+//		}
+//		tweetsByTag.sort(Comparator.comparing(Tweet::getPosted).reversed());
+//		return tweetMapper.entitiesToDtos(tweetsByTag);
+		Hashtag tag = hashtagRepository.findByLabelIgnoreCase(label);
+		List<Tweet> tweetsByTag = tag.getTweets();
+		tweetsByTag.sort(Comparator.comparing(Tweet::getPosted).reversed());
+		return tweetMapper.entitiesToDtos(tweetsByTag);
 	}
 
 }
